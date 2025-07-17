@@ -1,0 +1,56 @@
+{
+    "statusCode": 200,
+    "headers": {
+        "content-type": "application/json",
+        "date": "Sun, 15 Jan 2023 09:10:57 GMT",
+        "version": "0.4.6"
+    },
+    "body": {
+        "base": [{
+                "fund_name": "Fund I",
+                "fund_size": 222,
+                "vintage_year": 2014,
+                "invested_capital": 293.4092403,
+                "per_invested": 1.3216632445945946,
+                "realized": 363.8796041,
+                "unrealized_current_nav": 158.2995139,
+                "tot_value": 522.179118,
+                "gross_irr": 0.2,
+                "net_irr": 0.15,
+                "pme_irr": null,
+                "CA_median_irr": null,
+                "CA_upper_quartile_irr": null,
+                "gross_tvpi": 1.779695546,
+                "net_tvpi": 1.5,
+                "pme_tvpi": null,
+                "CA_median_tvpi": null,
+                "CA_upper_quartile_tvpi": null,
+                "dpi": 1.24017772490037,
+                "CA_upper_quartile_dpi": null,
+                "CA_median_dpi": null
+            }, {
+                "fund_name": "Fund II",
+                "fund_size": 286,
+                "vintage_year": 2016,
+                "invested_capital": 121.2545072,
+                "per_invested": 0.42396680839160844,
+                "realized": 21.57864466,
+                "unrealized_current_nav": 196.7976358,
+                "tot_value": 218.37628046,
+                "gross_irr": 0.15,
+                "net_irr": 0.1,
+                "pme_irr": null,
+                "CA_median_irr": null,
+                "CA_upper_quartile_irr": null,
+                "gross_tvpi": 1.800974542,
+                "net_tvpi": 1.7,
+                "pme_tvpi": null,
+                "CA_median_tvpi": null,
+                "CA_upper_quartile_tvpi": null,
+                "dpi": 0.1779615880538583,
+                "CA_upper_quartile_dpi": null,
+                "CA_median_dpi": null
+            }
+        ]
+    }
+}

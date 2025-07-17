@@ -1,0 +1,34 @@
+{
+    "statusCode": 200,
+    "headers": {
+        "content-type": "application/json",
+        "date": "Fri, 10 Mar 2023 10:39:34 GMT",
+        "version": "0.5.4"
+    },
+    "body": {
+        "base": [{
+                "fund_name": "GSR Opportunities IV",
+                "fund_size": 133.3,
+                "vintage_year": 2011,
+                "invested_capital": null,
+                "per_invested": null,
+                "realized": null,
+                "unrealized_current_nav": null,
+                "tot_value": null,
+                "gross_irr": null,
+                "net_irr": null,
+                "pme_irr": null,
+                "CA_median_irr": 0.1908939506,
+                "CA_upper_quartile_irr": 0.2673470977,
+                "gross_tvpi": null,
+                "net_tvpi": "Unavailable",
+                "pme_tvpi": null,
+                "CA_median_tvpi": 2.8755550858173526,
+                "CA_upper_quartile_tvpi": 4.265387854423595,
+                "dpi": null,
+                "CA_upper_quartile_dpi": 2.097068209348409,
+                "CA_median_dpi": 1.2656405279722165
+            }
+        ]
+    }
+}

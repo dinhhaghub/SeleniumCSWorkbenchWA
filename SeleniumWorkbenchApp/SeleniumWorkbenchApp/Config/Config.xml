@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<config>
+	<!-- Setup environment for running test-->
+	<browser>chrome</browser>
+	<!--projects: KS webapp-->
+	<project_name>webapp</project_name>
+	<site_name>qa</site_name>
+
+	<!--Collection of testing sites and credentials-->
+	<tokens bearerToken=""/>
+
+	<!--Webapp-->
+	<webapp>
+		<qa>
+			<url></url>
+			<instanceName>qa</instanceName>
+			<webApis datalakeApi="" WorkbenchApi=""/>
+		</qa>
+		<uat>
+			<url></url>
+			<instanceName>uat</instanceName>
+			<webApis datalakeApi="" WorkbenchApi=""/>
+		</uat>
+	</webapp>
+
+	<account>
+		<valid email="" password="" username=""/>
+		<invalid email="abc@123.456" password="abc"/>
+	</account>
+
+	<!--Firefox directory for 32 bit or 64 bit. (Currently, Using gecko 64 bit)-->
+	<gecko path="Core\WebDrivers" />
+
+	<!-- Database information for test report-->
+	<!--<database>
+		<connection>Server=.;Initial Catalog=...;Integrated Security=true;Trusted_Connection=Yes;</connection>
+		<functionality>SELECT * FROM ...</functionality>
+		<performance>SELECT * FROM ...</performance>
+	</database>-->
+
+	<!-- Screenshot directory and format setting -->
+	<!--<screenshot>
+		<screenshotPath>D://.../.../.../</screenshotPath>
+		<screenshotFormat>.jpeg</screenshotFormat>
+	</screenshot>-->
+
+</config>

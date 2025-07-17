@@ -1,0 +1,527 @@
+{
+    "statusCode": 200,
+    "headers": {
+        "content-type": "application/json",
+        "date": "Wed, 18 Jan 2023 05:57:15 GMT",
+        "version": "0.4.7"
+    },
+    "body": {
+        "gross_irr": null,
+        "pme": null,
+        "gross_total_alpha": null,
+        "fund_table": [{
+                "fund_name": "Fund I",
+                "vintage_year": 2014,
+                "fund_size": 222,
+                "dollars_invested": 293.409240334,
+                "est_gross_irr": 0.21140717111925858,
+                "gross_tvpi": 1.779695545534223,
+                "loss_ratio": 0.023763736929562653
+            }, {
+                "fund_name": "Fund II",
+                "vintage_year": 2016,
+                "fund_size": 286,
+                "dollars_invested": 161.25450716999998,
+                "est_gross_irr": 0.3054453002202517,
+                "gross_tvpi": 1.7276813226206087,
+                "loss_ratio": 0
+            }
+        ],
+        "results_table": [{
+                "index": "deals_positive_gta",
+                "filtered_deals": 0.8095238095238095,
+                "all_deals": 0.782608695652174
+            }, {
+                "index": "deals_negative_gta",
+                "filtered_deals": 0.19047619047619047,
+                "all_deals": 0.21739130434782608
+            }, {
+                "index": "deals_lost_money",
+                "filtered_deals": 0.047619047619047616,
+                "all_deals": 0.043478260869565216
+            }, {
+                "index": "capital_loss",
+                "filtered_deals": 0.017444075210997095,
+                "all_deals": 0.015335509017988415
+            }, {
+                "index": "capital_written_down",
+                "filtered_deals": 0.017444075210997095,
+                "all_deals": 0.015335509017988415
+            }
+        ],
+        "gta_table": [{
+                "index": "Less than -30%",
+                "percent_of_deals": 0,
+                "percent_of_capital": 0
+            }, {
+                "index": "-30% to -15%",
+                "percent_of_deals": 0.047619047619047616,
+                "percent_of_capital": 0.017444075210997095
+            }, {
+                "index": "-15% to -0%",
+                "percent_of_deals": 0.14285714285714285,
+                "percent_of_capital": 0.12326822225204619
+            }, {
+                "index": "-0% to  15%",
+                "percent_of_deals": 0.3333333333333333,
+                "percent_of_capital": 0.326314920344579
+            }, {
+                "index": "15% to 30%",
+                "percent_of_deals": 0.2857142857142857,
+                "percent_of_capital": 0.3994560000370327
+            }, {
+                "index": "30% to  45%",
+                "percent_of_deals": 0.14285714285714285,
+                "percent_of_capital": 0.12973900466253682
+            }, {
+                "index": "45% to 60%",
+                "percent_of_deals": 0,
+                "percent_of_capital": 0
+            }, {
+                "index": "60% to above",
+                "percent_of_deals": 0.047619047619047616,
+                "percent_of_capital": 0.0037777774928082625
+            }
+        ],
+        "attr1_table": [{
+                "attribution": "special_situations",
+                "gta_actual_dates": 0.23193065172703037,
+                "gta_time_zero": 0.24267991058375787,
+                "percent_invest_cap": 0.36278980218133366
+            }, {
+                "attribution": "restructurings",
+                "gta_actual_dates": -0.015333312835368387,
+                "gta_time_zero": 0.00026900723832140594,
+                "percent_invest_cap": 0.4638656222885783
+            }, {
+                "attribution": "structured_finance",
+                "gta_actual_dates": 0.08975222864646083,
+                "gta_time_zero": 0.09102105190536404,
+                "percent_invest_cap": 0.17334457553008803
+            }
+        ],
+        "attr2_table": [{
+                "attribution": "special_situations",
+                "gta_actual_dates": 0.19832347201142497,
+                "gta_time_zero": 0.1951815696539618,
+                "percent_invest_cap": 0.36278980218133366
+            }, {
+                "attribution": "restructurings",
+                "gta_actual_dates": 0.02997662687098558,
+                "gta_time_zero": 0.04459222648064774,
+                "percent_invest_cap": 0.4638656222885783
+            }, {
+                "attribution": "structured_finance",
+                "gta_actual_dates": 0.05822228039270312,
+                "gta_time_zero": 0.05886404530871686,
+                "percent_invest_cap": 0.17334457553008803
+            }
+        ],
+        "base": [{
+                "company_name": "Kingdom",
+                "fund_name": "Fund I",
+                "startDate": "2015-11-30",
+                "endDate": "2020-03-31",
+                "status": "Realized",
+                "gross_irr": 0.298568577,
+                "invested_capital": 30.035823,
+                "realized_capital": 63.83593465,
+                "unrealized_fmv": 0,
+                "attribution_category_1": "Special Situations",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 2.1253266357975273,
+                "gross_irr_final": 0.298568577,
+                "final_pme": 0.10159994574939613,
+                "deal_gta": 0.19696863125060388
+            }, {
+                "company_name": "Coast",
+                "fund_name": "Fund I",
+                "startDate": "2017-11-30",
+                "endDate": null,
+                "status": "Partial",
+                "gross_irr": 0.194561476,
+                "invested_capital": 16.417,
+                "realized_capital": 9.30995109,
+                "unrealized_fmv": 17.35143499,
+                "attribution_category_1": "Restructurings",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 1.6240108472924406,
+                "gross_irr_final": 0.194561476,
+                "final_pme": 0.11828573257908943,
+                "deal_gta": 0.07627574342091058
+            }, {
+                "company_name": "Home",
+                "fund_name": "Fund I",
+                "startDate": "2015-03-31",
+                "endDate": "2015-12-31",
+                "status": "Realized",
+                "gross_irr": 0.654753083,
+                "invested_capital": 1.51,
+                "realized_capital": 2.027751824,
+                "unrealized_fmv": 0,
+                "attribution_category_1": "Structured Finance",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 1.3428820026490067,
+                "gross_irr_final": 0.654753083,
+                "final_pme": 0.02589353245867959,
+                "deal_gta": 0.6288595505413204
+            }, {
+                "company_name": "Limestone",
+                "fund_name": "Fund I",
+                "startDate": "2015-11-30",
+                "endDate": "2019-09-30",
+                "status": "Realized",
+                "gross_irr": 0.373856193,
+                "invested_capital": 21.8,
+                "realized_capital": 29.6021252,
+                "unrealized_fmv": 0,
+                "attribution_category_1": "Restructurings",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 1.3578956513761467,
+                "gross_irr_final": 0.373856193,
+                "final_pme": 0.05849368861839633,
+                "deal_gta": 0.3153625043816037
+            }, {
+                "company_name": "Ocean/Spring",
+                "fund_name": "Fund I",
+                "startDate": "2018-02-28",
+                "endDate": null,
+                "status": "Partial",
+                "gross_irr": 0.339099449,
+                "invested_capital": 25.750002,
+                "realized_capital": 34.83335873,
+                "unrealized_fmv": 5.076033374,
+                "attribution_category_1": "Restructurings",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 1.549879184630743,
+                "gross_irr_final": 0.339099449,
+                "final_pme": 0.08108285348637558,
+                "deal_gta": 0.25801659551362444
+            }, {
+                "company_name": "Aurora",
+                "fund_name": "Fund I",
+                "startDate": "2014-04-30",
+                "endDate": "2014-08-31",
+                "status": "Realized",
+                "gross_irr": 0.495341927,
+                "invested_capital": 25,
+                "realized_capital": 28.54924911,
+                "unrealized_fmv": 0,
+                "attribution_category_1": "Special Situations",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 1.1419699644,
+                "gross_irr_final": 0.495341927,
+                "final_pme": 0.17371241314850888,
+                "deal_gta": 0.32162951385149113
+            }, {
+                "company_name": "Kronos",
+                "fund_name": "Fund I",
+                "startDate": "2014-04-30",
+                "endDate": "2020-03-31",
+                "status": "Realized",
+                "gross_irr": null,
+                "invested_capital": 6.9725,
+                "realized_capital": 3.95064053,
+                "unrealized_fmv": 0,
+                "attribution_category_1": "Restructurings",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 0.5666031595553962,
+                "gross_irr_final": -0.09145323601222861,
+                "final_pme": 0.06351817366222504,
+                "deal_gta": -0.15497140967445366
+            }, {
+                "company_name": "Range",
+                "fund_name": "Fund I",
+                "startDate": "2018-11-30",
+                "endDate": null,
+                "status": "Partial",
+                "gross_irr": 0.289844614,
+                "invested_capital": 20,
+                "realized_capital": 24.96114568,
+                "unrealized_fmv": 4.739471868,
+                "attribution_category_1": "Restructurings",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 1.4850308774,
+                "gross_irr_final": 0.289844614,
+                "final_pme": 0.08046099846391522,
+                "deal_gta": 0.20938361553608478
+            }, {
+                "company_name": "Iris",
+                "fund_name": "Fund I",
+                "startDate": "2017-08-31",
+                "endDate": null,
+                "status": "Unrealized",
+                "gross_irr": 0.173583025,
+                "invested_capital": 13.93450791,
+                "realized_capital": 0.1233515,
+                "unrealized_fmv": 24.11411582,
+                "attribution_category_1": "Restructurings",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 1.7393845176697018,
+                "gross_irr_final": 0.173583025,
+                "final_pme": 0.11971289563819512,
+                "deal_gta": 0.05387012936180488
+            }, {
+                "company_name": "Echo",
+                "fund_name": "Fund I",
+                "startDate": "2014-03-31",
+                "endDate": "2015-08-31",
+                "status": "Realized",
+                "gross_irr": 0.239774102,
+                "invested_capital": 15.0741,
+                "realized_capital": 19.70361472,
+                "unrealized_fmv": 0,
+                "attribution_category_1": "Special Situations",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 1.3071171559164396,
+                "gross_irr_final": 0.239774102,
+                "final_pme": 0.08115255842289835,
+                "deal_gta": 0.15862154357710162
+            }, {
+                "company_name": "West",
+                "fund_name": "Fund I",
+                "startDate": "2015-01-31",
+                "endDate": "2021-06-30",
+                "status": "Realized",
+                "gross_irr": 0.158665508,
+                "invested_capital": 38.28124994,
+                "realized_capital": 90.97343042,
+                "unrealized_fmv": 0,
+                "attribution_category_1": "Structured Finance",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 2.3764487983696174,
+                "gross_irr_final": 0.158665508,
+                "final_pme": 0.10844476737621359,
+                "deal_gta": 0.050220740623786425
+            }, {
+                "company_name": "Rhine",
+                "fund_name": "Fund I",
+                "startDate": "2017-09-30",
+                "endDate": "2019-04-30",
+                "status": "Realized",
+                "gross_irr": 0.130918044,
+                "invested_capital": 18.02224438,
+                "realized_capital": 21.0589805,
+                "unrealized_fmv": 0,
+                "attribution_category_1": "Structured Finance",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 1.1684993309362728,
+                "gross_irr_final": 0.130918044,
+                "final_pme": 0.02100692348216617,
+                "deal_gta": 0.10991112051783385
+            }, {
+                "company_name": "Iron",
+                "fund_name": "Fund I",
+                "startDate": "2014-03-31",
+                "endDate": null,
+                "status": "Unrealized",
+                "gross_irr": null,
+                "invested_capital": 6.096365858,
+                "realized_capital": 0,
+                "unrealized_fmv": 6.523286954,
+                "attribution_category_1": "Restructurings",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 1.0700287853360653,
+                "gross_irr_final": 0.009373426026592569,
+                "final_pme": 0.11625212078840208,
+                "deal_gta": -0.10687869476180951
+            }, {
+                "company_name": "Aqua",
+                "fund_name": "Fund I",
+                "startDate": "2017-10-31",
+                "endDate": null,
+                "status": "Unrealized",
+                "gross_irr": 0.58606059,
+                "invested_capital": 5.057447246,
+                "realized_capital": 0,
+                "unrealized_fmv": 27.43179739,
+                "attribution_category_1": "Special Situations",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 5.424040243167373,
+                "gross_irr_final": 0.58606059,
+                "final_pme": 0.1395431177583685,
+                "deal_gta": 0.4465174722416315
+            }, {
+                "company_name": "Olive",
+                "fund_name": "Fund I",
+                "startDate": "2016-12-31",
+                "endDate": null,
+                "status": "Partial",
+                "gross_irr": 0.097339147,
+                "invested_capital": 15.653,
+                "realized_capital": 16.44455575,
+                "unrealized_fmv": 2.219185873,
+                "attribution_category_1": "Restructurings",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 1.1923427856002045,
+                "gross_irr_final": 0.097339147,
+                "final_pme": 0.1436188715614499,
+                "deal_gta": -0.046279724561449895
+            }, {
+                "company_name": "Eagle",
+                "fund_name": "Fund I",
+                "startDate": "2017-04-30",
+                "endDate": null,
+                "status": "Partial",
+                "gross_irr": 0.31699844,
+                "invested_capital": 28.805,
+                "realized_capital": 8.587818954,
+                "unrealized_fmv": 70.84418767,
+                "attribution_category_1": "Special Situations",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 2.7575770395417463,
+                "gross_irr_final": 0.31699844,
+                "final_pme": 0.1402911157221375,
+                "deal_gta": 0.17670732427786248
+            }, {
+                "company_name": "Sapphire",
+                "fund_name": "Fund I",
+                "startDate": "2014-03-31",
+                "endDate": "2020-03-31",
+                "status": "Realized",
+                "gross_irr": 0.152584952,
+                "invested_capital": 5,
+                "realized_capital": 9.917695444,
+                "unrealized_fmv": 0,
+                "attribution_category_1": "Structured Finance",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 1.9835390888,
+                "gross_irr_final": 0.152584952,
+                "final_pme": 0.07787823430051419,
+                "deal_gta": 0.07470671769948581
+            }, {
+                "company_name": "Admiral",
+                "fund_name": "Fund II",
+                "startDate": "2018-02-28",
+                "endDate": null,
+                "status": "Partial",
+                "gross_irr": 0.198948127,
+                "invested_capital": 40,
+                "realized_capital": 50.18529694,
+                "unrealized_fmv": 10.03482281,
+                "attribution_category_1": "Special Situations",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 1.50550299375,
+                "gross_irr_final": 0.198948127,
+                "final_pme": 0.006779874245440352,
+                "deal_gta": 0.19216825275455965
+            }, {
+                "company_name": "Stig",
+                "fund_name": "Fund II",
+                "startDate": "2021-02-28",
+                "endDate": null,
+                "status": "Unrealized",
+                "gross_irr": 1,
+                "invested_capital": 38.957835,
+                "realized_capital": 0,
+                "unrealized_fmv": 103.9147341,
+                "attribution_category_1": "Restructurings",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 2.667364192594378,
+                "gross_irr_final": 1,
+                "final_pme": 0.3502242131147029,
+                "deal_gta": 0.6497757868852971
+            }, {
+                "company_name": "Summer",
+                "fund_name": "Fund II",
+                "startDate": "2018-04-30",
+                "endDate": null,
+                "status": "Unrealized",
+                "gross_irr": 0.241395789,
+                "invested_capital": 20.97500077,
+                "realized_capital": 0,
+                "unrealized_fmv": 41.17377157,
+                "attribution_category_1": "Special Situations",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 1.9629926130391269,
+                "gross_irr_final": 0.241395789,
+                "final_pme": 0.14679502573980843,
+                "deal_gta": 0.09460076326019157
+            }, {
+                "company_name": "Pegasus",
+                "fund_name": "Fund II",
+                "startDate": "2019-05-31",
+                "endDate": null,
+                "status": "Partial",
+                "gross_irr": 0.253117985,
+                "invested_capital": 17.8,
+                "realized_capital": 18.64,
+                "unrealized_fmv": 6.511824246,
+                "attribution_category_1": "Restructurings",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 1.4130238340449437,
+                "gross_irr_final": 0.253117985,
+                "final_pme": 0.16262868564666308,
+                "deal_gta": 0.09048929935333691
+            }, {
+                "company_name": "Albatross",
+                "fund_name": "Fund II",
+                "startDate": "2018-04-30",
+                "endDate": null,
+                "status": "Unrealized",
+                "gross_irr": 0.025521502,
+                "invested_capital": 27.5216714,
+                "realized_capital": 2.93864466,
+                "unrealized_fmv": 26.5794751,
+                "attribution_category_1": "Restructurings",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 1.0725409562153265,
+                "gross_irr_final": 0.025521502,
+                "final_pme": 0.15175684587328234,
+                "deal_gta": -0.12623534387328234
+            }, {
+                "company_name": "Galen",
+                "fund_name": "Fund II",
+                "startDate": "2020-07-31",
+                "endDate": null,
+                "status": "Unrealized",
+                "gross_irr": 0.213623065,
+                "invested_capital": 16,
+                "realized_capital": 0,
+                "unrealized_fmv": 18.6178308,
+                "attribution_category_1": "Structured Finance",
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 1.163614425,
+                "gross_irr_final": 0.213623065,
+                "final_pme": 0.3047346224619202,
+                "deal_gta": -0.09111155746192018
+            }
+        ],
+        "final_row": [{
+                "gross_irr": null,
+                "invested_capital": 454.663747504,
+                "realized_capital": 435.64354570200004,
+                "unrealized_fmv": 365.13197256499996,
+                "custom_weight": 0,
+                "actual_weight": 0,
+                "gross_tvpi": 1.7612477851226858,
+                "final_gross_irr": null,
+                "pme": null,
+                "gta": null
+            }
+        ]
+    }
+}
