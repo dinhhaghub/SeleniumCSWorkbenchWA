@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<coreProperties xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">
+  <dc:creator>Microsoft</dc:creator>
+  <dc:description>This package contains the full set of binaries for the Visual Studio Test Platform (vstest).
+      It provides a modern, cross platform testing engine that powers the testing on .NET Core as well.
+      It integrates with popular test frameworks like MSTest(v1 and v2), xUnit and Nunit with support for extensibility.
+
+      The package supports running Coded UI tests.
+      While running Coded UI tests, you must ensure that the package version matches the major version of Visual Studio used to build the test binaries.
+      For example, if your Coded UI test project was built using Visual Studio 2019 (version 16.x), you must use test platform version 16.x.
+      Coded UI test is deprecated (https://docs.microsoft.com/en-us/visualstudio/releases/2019/release-notes-preview#test-tools) and
+      Visual Studio 2019 (Test Platform version 16.x) will be the last version with Coded UI test functionality.</dc:description>
+  <dc:identifier>Microsoft.TestPlatform</dc:identifier>
+  <version>17.14.1</version>
+  <keywords>vstest visual-studio unittest testplatform mstest microsoft test testing</keywords>
+  <lastModifiedBy>NuGet.Build.Tasks.Pack, Version=6.12.2.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35;Microsoft Windows NT 10.0.20348.0;.NET Framework 4.7.2</lastModifiedBy>
+</coreProperties>
