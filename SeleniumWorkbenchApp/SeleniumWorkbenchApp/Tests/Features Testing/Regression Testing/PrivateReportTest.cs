@@ -90,6 +90,7 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             string userProfileDownloadPath = Environment.GetEnvironmentVariable("USERPROFILE") + @"\" + "Downloads";
             string fileName = @"download.pdf";
             string? fileNameBaseline = null;
+            string videoFileName = "PrivateReportTestTC001";
             #endregion
 
             #region Workflow scenario
@@ -97,6 +98,9 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             test = rep.CreateTest("WorkbenchApp - Private Report Test - TC001");
             try
             {
+                // Start recording video
+                Driver.StartVideoRecord(videoFileName);
+
                 // Delete downloaded PDF file
                 GeneralAction.Instance.DeleteFilePath(userProfileDownloadPath, fileName);
 
@@ -161,39 +165,39 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
 
                 #region Verify headers in tables of Report
                 string table = "Fund Metrics";
-                verifyPoint = "Fund Name" == SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 1)
-                    && "Vintage Year" == SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 2)
-                    && "Fund Size" == SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 3)
-                    && "Total Invested" == SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 4)
-                    && "% Invested" == SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 5)
-                    && "Realized" == SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 6)
-                    && "Unrealized (Current NAV)" == SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 7)
-                    && "Total Value" == SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 8);
+                verifyPoint = SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 1, "Fund Name")
+                    && SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 2, "Vintage Year")
+                    && SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 3, "Fund Size")
+                    && SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 4, "Total Invested")
+                    && SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 5, "% Invested")
+                    && SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 6, "Realized")
+                    && SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 7, "Unrealized (Current NAV)")
+                    && SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 8, "Total Value");
                 verifyPoints.Add(summaryTC = "Verify headers in the 1st table: '" + table + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
                 table = "IRR";
-                verifyPoint = "Fund Name" == SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 1)
-                    && "Gross" == SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 2)
-                    && "Net" == SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 3)
-                    && "PME" == SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 4)
-                    && "Gross Total Alpha" == SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 5)
-                    && "Net Total Alpha" == SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 6)
-                    && "CA Upper Quartile" == SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 7)
-                    && "CA Median" == SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 8);
+                verifyPoint = SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 1, "Fund Name")
+                    && SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 2, "Gross")
+                    && SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 3, "Net")
+                    && SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 4, "PME")
+                    && SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 5, "Gross Total Alpha")
+                    && SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 6, "Net Total Alpha")
+                    && SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 7, "CA Upper Quartile")
+                    && SearchFundAction.Instance.HeaderTableOfReportGetText(10, table, 8, "CA Median");
                 verifyPoints.Add(summaryTC = "Verify headers in the 2nd table: '" + table + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
                 table = "TVPI & DPI";
-                verifyPoint = "Fund Name" == SearchFundAction.Instance.HeaderTVPIAndDPITableOfReportGetText(10, 1)
-                    && "Gross TVPI" == SearchFundAction.Instance.HeaderTVPIAndDPITableOfReportGetText(10, 2)
-                    && "Net TVPI" == SearchFundAction.Instance.HeaderTVPIAndDPITableOfReportGetText(10, 3)
-                    && "PME" == SearchFundAction.Instance.HeaderTVPIAndDPITableOfReportGetText(10, 4)
-                    && "CA Upper Quartile" == SearchFundAction.Instance.HeaderTVPIAndDPITableOfReportGetText(10, 5)
-                    && "CA Median" == SearchFundAction.Instance.HeaderTVPIAndDPITableOfReportGetText(10, 6)
-                    && "DPI" == SearchFundAction.Instance.HeaderTVPIAndDPITableOfReportGetText(10, 7)
-                    && "CA Upper Quartile" == SearchFundAction.Instance.HeaderTVPIAndDPITableOfReportGetText(10, 8)
-                    && "CA Median" == SearchFundAction.Instance.HeaderTVPIAndDPITableOfReportGetText(10, 9);
+                verifyPoint = SearchFundAction.Instance.HeaderTVPIAndDPITableOfReportGetText(10, 1, "Fund Name")
+                    && SearchFundAction.Instance.HeaderTVPIAndDPITableOfReportGetText(10, 2, "Gross TVPI")
+                    && SearchFundAction.Instance.HeaderTVPIAndDPITableOfReportGetText(10, 3, "Net TVPI")
+                    && SearchFundAction.Instance.HeaderTVPIAndDPITableOfReportGetText(10, 4, "PME")
+                    && SearchFundAction.Instance.HeaderTVPIAndDPITableOfReportGetText(10, 5, "CA Upper Quartile")
+                    && SearchFundAction.Instance.HeaderTVPIAndDPITableOfReportGetText(10, 6, "CA Median")
+                    && SearchFundAction.Instance.HeaderTVPIAndDPITableOfReportGetText(10, 7, "DPI")
+                    && SearchFundAction.Instance.HeaderTVPIAndDPITableOfReportGetText(10, 8, "CA Upper Quartile")
+                    && SearchFundAction.Instance.HeaderTVPIAndDPITableOfReportGetText(10, 9, "CA Median");
                 verifyPoints.Add(summaryTC = "Verify headers in the 3rd table: '" + table + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 #endregion
@@ -206,113 +210,160 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                     && (data = "Total Funds") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "3", "1");
                 verifyPoints.Add(summaryTC = "Verify data in the 1st table '" + table + "' (Fund Name)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_FundName_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+                
                 verifyPoint = (data = "2014") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "2")
                     && (data = "2016") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "2", "2");
                 verifyPoints.Add(summaryTC = "Verify data in the 1st table '" + table + "' (Vintage Year)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_VintageYear_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+                
                 verifyPoint = Convert.ToDouble(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "3")) < 1000
                     && Convert.ToDouble(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "2", "3")) < 1000;
                 verifyPoints.Add(summaryTC = "Verify data in the 1st table '" + table + "' (Fund Size)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_FundSize_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = Convert.ToDouble(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "4")) < 1000
                     && Convert.ToDouble(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "2", "4")) < 1000
                     && Convert.ToDouble(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "3", "4")) < 1000;
                 verifyPoints.Add(summaryTC = "Verify data in the 1st table '" + table + "' (Total Invested)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_TotalInvested_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = double.Parse(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "5").Replace("%", "")) < 1000
                     && double.Parse(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "2", "5").Replace("%", "")) < 1000
                     && double.Parse(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "3", "5").Replace("%", "")) < 1000;
                 verifyPoints.Add(summaryTC = "Verify data in the 1st table '" + table + "' (% Invested)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_PercInvested_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = Convert.ToDouble(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "6")) < 1000
                     && Convert.ToDouble(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "2", "6")) < 1000
                     && Convert.ToDouble(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "3", "6")) < 1000;
                 verifyPoints.Add(summaryTC = "Verify data in the 1st table '" + table + "' (Realized)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_Realized_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = Convert.ToDouble(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "7")) < 1000
                     && Convert.ToDouble(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "2", "7")) < 1000
                     && Convert.ToDouble(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "3", "7")) < 1000;
                 verifyPoints.Add(summaryTC = "Verify data in the 1st table '" + table + "' (Unrealized (Current NAV))", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_UnrelCurNAV_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = Convert.ToDouble(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "8")) < 1000
                     && Convert.ToDouble(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "2", "8")) < 1000
                     && Convert.ToDouble(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "3", "8")) < 1000;
                 verifyPoints.Add(summaryTC = "Verify data in the 1st table '" + table + "' (Total Value)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_TotalValue_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
 
                 table = "IRR";
                 verifyPoint = (data = "Fund I") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "1")
                     && (data = "Fund II") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "2", "1");
                 verifyPoints.Add(summaryTC = "Verify data in the 2nd table '" + table + "' (Fund Name)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_FundName_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = double.Parse(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "2").Replace("%", "")) < 1000
                     && double.Parse(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "2", "2").Replace("%", "")) < 1000;
                 verifyPoints.Add(summaryTC = "Verify data in the 2nd table '" + table + "' (Gross)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_Gross_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = double.Parse(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "3").Replace("%", "")) < 1000
                     && double.Parse(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "2", "3").Replace("%", "")) < 1000;
                 verifyPoints.Add(summaryTC = "Verify data in the 2nd table '" + table + "' (Net)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_Net_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = (data = "") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "4")
                     && (data = "") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "2", "4");
                 verifyPoints.Add(summaryTC = "Verify data in the 2nd table '" + table + "' (PME)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_PME_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = (data = "") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "5")
                     && (data = "") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "2", "5");
                 verifyPoints.Add(summaryTC = "Verify data in the 2nd table '" + table + "' (Gross Total Alpha)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_GrossTotalAlpha_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = (data = "") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "6")
                     && (data = "") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "2", "6");
                 verifyPoints.Add(summaryTC = "Verify data in the 2nd table '" + table + "' (Net Total Alpha)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_NetTotalAlpha_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = (data = "") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "7")
                     && (data = "") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "2", "7");
                 verifyPoints.Add(summaryTC = "Verify data in the 2nd table '" + table + "' (CA Upper Quartile)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_CAUpperQuartile_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = (data = "") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "8")
                     && (data = "") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "2", "8");
                 verifyPoints.Add(summaryTC = "Verify data in the 2nd table '" + table + "' (CA Median)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_CAMedian_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
 
                 table = "TVPI & DPI";
                 verifyPoint = (data = "Fund I") == SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "1", "1")
                     && (data = "Fund II") == SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "2", "1");
                 verifyPoints.Add(summaryTC = "Verify data in the 3rd table '" + table + "' (Fund Name)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_FundName_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = Convert.ToDouble(SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "1", "2")) < 1000
                     && Convert.ToDouble(SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "2", "2")) < 1000;
                 verifyPoints.Add(summaryTC = "Verify data in the 3rd table '" + table + "' (Gross TVPI)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_GrossTVPI_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = Convert.ToDouble(SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "1", "3")) < 1000
                     && Convert.ToDouble(SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "2", "3")) < 1000;
                 verifyPoints.Add(summaryTC = "Verify data in the 3rd table '" + table + "' (Net TVPI)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_NetTVPI_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = (data = "") == SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "1", "4")
                     && (data = "") == SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "2", "4");
                 verifyPoints.Add(summaryTC = "Verify data in the 3rd table '" + table + "' (PME)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_PME_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = (data = "") == SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "1", "5")
                     && (data = "") == SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "2", "5");
                 verifyPoints.Add(summaryTC = "Verify data in the 3rd table '" + table + "' (TVPI-CA Upper Quartile)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_TVPI-CAUpQuartile_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = (data = "") == SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "1", "6")
                     && (data = "") == SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "2", "6");
                 verifyPoints.Add(summaryTC = "Verify data in the 3rd table '" + table + "' (TVPI-CA Median)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_TVPI-CAMedian_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = Convert.ToDouble(SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "1", "7")) < 1000
                     && Convert.ToDouble(SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "2", "7")) < 1000;
                 verifyPoints.Add(summaryTC = "Verify data in the 3rd table '" + table + "' (DPI)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_DPI_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = (data = "") == SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "1", "8")
                     && (data = "") == SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "2", "8");
                 verifyPoints.Add(summaryTC = "Verify data in the 3rd table '" + table + "' (DPI-CA Upper Quartile)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_DPI-CAUpQuartile_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = (data = "") == SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "1", "9")
                     && (data = "") == SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "2", "9");
                 verifyPoints.Add(summaryTC = "Verify data in the 3rd table '" + table + "' (DPI-CA Median)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC001_" + table + "_DPI-CAMedian_" + data + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
                 #endregion
-                
+
                 #region Save PDF file
                 // Click on 'Print' button
                 GeneralAction.Instance.ClickButtonLabel(10, SearchFundPage.print);
@@ -359,9 +410,18 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 // Delete downloaded PDF file
                 GeneralAction.Instance.DeleteFilePath(userProfileDownloadPath, fileName);
                 #endregion
+
+                // Stop recording video
+                Driver.StopVideoRecord();
+
+                // Delete video file
+                Driver.DeleteFilesContainsName(Path.GetFullPath(@"../../../../../TestResults/"), videoFileName);
             }
             catch (Exception exception)
             {
+                // Stop recording video
+                Driver.StopVideoRecord();
+
                 // Print exception
                 System.Console.WriteLine(exception);
 
@@ -382,6 +442,7 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             string urlInstance = LoginPage.url;
             string cambridgeFund = "GSR Ventures";
             const string sourceIcon = "C";
+            string videoFileName = "PrivateReportTestTC002";
             #endregion
 
             #region Workflow scenario
@@ -389,6 +450,9 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             test = rep.CreateTest("WorkbenchApp - Private Report Test - TC002");
             try
             {
+                // Start recording video
+                Driver.StartVideoRecord(videoFileName);
+
                 // Log into the application
                 LoginAction.Instance.LoginSiteNoGodaddy(60, urlInstance);
 
@@ -573,6 +637,8 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                     //&& fundName8 == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "8", "1");
                 verifyPoints.Add(summaryTC = "Verify data in the 1st table '" + table + "' (Fund Name)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC002_" + table + "_FundName_" + fundName1 + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = fundMetricsVintageYear1 == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "2");
                     //&& fundMetricsVintageYear2 == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "2", "2")
                     //&& fundMetricsVintageYear3 == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "3", "2")
@@ -583,6 +649,8 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                     //&& fundMetricsVintageYear8 == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "8", "2");
                 verifyPoints.Add(summaryTC = "Verify data in the 1st table '" + table + "' (Vintage Year)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC002_" + table + "_VinYear_" + fundMetricsVintageYear1 + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = Convert.ToDouble(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "3")) < 1000;
                     //&& Convert.ToDouble(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "2", "3")) < 1000
                     //&& Convert.ToDouble(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "3", "3")) < 1000
@@ -618,75 +686,116 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 verifyPoint = fundName1 == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "1");
                 verifyPoints.Add(summaryTC = "Verify data in the 2nd table '" + table + "' (Fund Name)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC002_" + table + "_FundName_" + fundName1 + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = ("") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "2")
                     && ("") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "last()", "2");
                 verifyPoints.Add(summaryTC = "Verify data in the 2nd table '" + table + "' (Gross)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC002_" + table + "_Gross_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = ("") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "3")
                     && ("") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "last()", "3");
                 verifyPoints.Add(summaryTC = "Verify data in the 2nd table '" + table + "' (Net)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC002_" + table + "_Net_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = ("") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "4")
                     && ("") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "last()", "4");
                 verifyPoints.Add(summaryTC = "Verify data in the 2nd table '" + table + "' (PME)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC002_" + table + "_PME_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = ("") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "5")
                     && ("") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "last()", "5");
                 verifyPoints.Add(summaryTC = "Verify data in the 2nd table '" + table + "' (Gross Total Alpha)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC002_" + table + "_GrossTotalAlpha_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = ("") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "6")
                     && ("") == SearchFundAction.Instance.DataTableOfReportGetText(10, table, "last()", "6");
                 verifyPoints.Add(summaryTC = "Verify data in the 2nd table '" + table + "' (Net Total Alpha)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC002_" + table + "_NetTotalAlpha_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = double.Parse(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "7").Replace("%", "")) < 1000
                     && double.Parse(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "last()", "7").Replace("%", "")) < 1000;
                 verifyPoints.Add(summaryTC = "Verify data in the 2nd table '" + table + "' (CA Upper Quartile)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC002_" + table + "_CAUpperQuartile_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = double.Parse(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "1", "8").Replace("%", "")) < 1000
                     && double.Parse(SearchFundAction.Instance.DataTableOfReportGetText(10, table, "last()", "8").Replace("%", "")) < 1000;
                 verifyPoints.Add(summaryTC = "Verify data in the 2nd table '" + table + "' (CA Median)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC002_" + table + "_CAMedian_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
 
                 table = "TVPI & DPI";
                 verifyPoint = fundName1 == SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "1", "1");
                 verifyPoints.Add(summaryTC = "Verify data in the 3rd table '" + table + "' (Fund Name)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC002_" + table + "_FundName_" + fundName1 + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = ("") == SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "1", "2")
                     && ("") == SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "last()", "2");
                 verifyPoints.Add(summaryTC = "Verify data in the 3rd table '" + table + "' (Gross TVPI)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC002_" + table + "_GrossTVPI_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = tVPINetTVPI1 == SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "1", "3")
                     && tVPINetTVPILast == SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "last()", "3");
                 verifyPoints.Add(summaryTC = "Verify data in the 3rd table '" + table + "' (Net TVPI)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC002_" + table + "_NetTVPI_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = ("") == SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "1", "4")
                     && ("") == SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "last()", "4");
                 verifyPoints.Add(summaryTC = "Verify data in the 3rd table '" + table + "' (PME)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC002_" + table + "_PME_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = Convert.ToDouble(SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "1", "5")) < 1000
                     && Convert.ToDouble(SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "last()", "5")) < 1000;
                 verifyPoints.Add(summaryTC = "Verify data in the 3rd table '" + table + "' (TVPI-CA Upper Quartile)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC002_" + table + "_TVPI-CAUpperQuartile_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = Convert.ToDouble(SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "1", "6")) < 1000
                     && Convert.ToDouble(SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "last()", "6")) < 1000;
                 verifyPoints.Add(summaryTC = "Verify data in the 3rd table '" + table + "' (TVPI-CA Median)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC002_" + table + "_TVPI-CAUpperMedian_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = ("") == SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "1", "7")
                     && ("") == SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "last()", "7");
                 verifyPoints.Add(summaryTC = "Verify data in the 3rd table '" + table + "' (DPI)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC002_" + table + "_DPI_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = Convert.ToDouble(SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "1", "8")) < 1000
                     && Convert.ToDouble(SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "last()", "8")) < 1000;
                 verifyPoints.Add(summaryTC = "Verify data in the 3rd table '" + table + "' (DPI-CA Upper Quartile)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC002_" + table + "_DPI-CAUpperQuartile_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
+
                 verifyPoint = Convert.ToDouble(SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "1", "9")) < 1000
                     && Convert.ToDouble(SearchFundAction.Instance.DataTVPIAndDPITableOfReportGetText(10, "last()", "9")) < 1000;
                 verifyPoints.Add(summaryTC = "Verify data in the 3rd table '" + table + "' (DPI-CA Median)", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("ss_PrivateReportTC002_" + table + "_DPI-CAMedian_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
                 #endregion
+
+                // Stop recording video
+                Driver.StopVideoRecord();
+
+                // Delete video file
+                Driver.DeleteFilesContainsName(Path.GetFullPath(@"../../../../../TestResults/"), videoFileName);
             }
             catch (Exception exception)
             {
+                // Stop recording video
+                Driver.StopVideoRecord();
+
                 // Print exception
                 System.Console.WriteLine(exception);
 

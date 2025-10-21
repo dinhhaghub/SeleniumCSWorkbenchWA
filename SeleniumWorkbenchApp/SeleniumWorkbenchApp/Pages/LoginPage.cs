@@ -1,19 +1,23 @@
 ﻿using NUnit.Framework;
 using OpenQA.Selenium;
+using OpenQA.Selenium.BiDi.BrowsingContext;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using WorkbenchApp.FunctionalTest;
 using WorkbenchApp.UITest.Core.BaseClass;
 using WorkbenchApp.UITest.Core.BaseTestCase;
 using WorkbenchApp.UITest.Core.Selenium;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace WorkbenchApp.UITest.Pages
 {
@@ -78,6 +82,10 @@ namespace WorkbenchApp.UITest.Pages
         internal static string email = xdoc.XPathSelectElement("config/account/valid").Attribute("email").Value;
         internal static string password = xdoc.XPathSelectElement("config/account/valid").Attribute("password").Value;
         internal static string username = xdoc.XPathSelectElement("config/account/valid").Attribute("username").Value;
+        /// tenenantId, clientId, redirectUri are for MSAL (Microsoft Authentication Library) only for prod env
+        internal static string clientId = xdoc.XPathSelectElement("config/clientId").Value;
+        internal static string tenantId = xdoc.XPathSelectElement("config/tenantId").Value;
+        internal static string redirectUri = xdoc.XPathSelectElement("config/redirectUri").Value;
         internal static WebDriverWait? wait;
         internal static string totalEndowment = "Total Endowment";
         internal static string publicFund = "Public Fund";
@@ -121,6 +129,26 @@ namespace WorkbenchApp.UITest.Pages
         internal static By rowValuesInAssetTable(int row, int column) => By.XPath(@"//tbody[@class='p-element p-treetable-tbody']/tr[" + row + "]/td[" + column + "]");
 
         // Initiate the elements
+        public IWebElement HighlightElement(IWebElement element, string? color = null, string? setOrRemoveAttr = null)
+        {
+            color ??= "blue";
+            setOrRemoveAttr ??= "remove"; // chỉ định hành động "remove" hoặc "keep"
+
+            IJavaScriptExecutor js = (IJavaScriptExecutor)Driver.Browser;
+
+            // Highlight
+            js.ExecuteScript("arguments[0].setAttribute('style', arguments[1]);", element, "border: 3px solid " + color + ";");
+            Thread.Sleep(150);
+
+            // Unhighlight nếu setOrRemoveAttr = "remove"
+            if (setOrRemoveAttr.Equals("remove", StringComparison.OrdinalIgnoreCase))
+            {
+                js.ExecuteScript("arguments[0].removeAttribute('style');", element);
+            }
+
+            return element;
+        }
+
         public IWebElement btnLogin(int timeoutInSeconds)
         {
             wait = new WebDriverWait(Driver.Browser, TimeSpan.FromSeconds(timeoutInSeconds));
@@ -333,31 +361,47 @@ namespace WorkbenchApp.UITest.Pages
 
         public LoginAction ClickLogin(int timeoutInSeconds)
         {
-            Map.btnLogin(timeoutInSeconds).Click();
+            Map.HighlightElement(Map.btnLogin(timeoutInSeconds)).Click();
             return this;
         }
 
         public bool IsLoginWithMSAccountBtnShown(int timeoutInSeconds)
         {
-            return Map.btnLogin(timeoutInSeconds).Displayed;
+            var iweb = Map.btnLogin(timeoutInSeconds);
+            bool element = Map.HighlightElement(iweb, "green").Displayed;
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute"); // keep highlight in red border if fail
+                Driver.TakeScreenShot("ss_IsLoginWithMSAccountBtnShown" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
 
         // Email - Sign in to your account (Microsoft site)
         public LoginAction EnterEmail(string txt)
         {
-            Map.txtEmail.SendKeys(txt);
+            Map.HighlightElement(Map.txtEmail).SendKeys(txt);
             return this;
         }
 
         // Next button (Microsoft site - popup 1st)
         public LoginAction ClickNext(int timeoutInSeconds)
         {
-            Map.btnNext(timeoutInSeconds).Click();
+            WebDriverWait wait = new WebDriverWait(Driver.Browser, TimeSpan.FromSeconds(10));
+            wait.Until(driver => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+
+            //Map.HighlightElement(Map.btnNext(timeoutInSeconds)).Click();
+
+            // click bằng JavaScript
+            IJavaScriptExecutor je = (IJavaScriptExecutor)Driver.Browser;
+            je.ExecuteScript("arguments[0].click();", Map.HighlightElement(Map.btnNext(timeoutInSeconds)));
             return this;
         }
         public LoginAction EnterPassword(int timeoutInSeconds, string txt)
         {
-            Map.txtPassword(timeoutInSeconds).SendKeys(txt);
+            Map.HighlightElement(Map.txtPassword(timeoutInSeconds)).SendKeys(txt);
             return this;
         }
         public LoginAction ClickSignIn(int timeoutInSeconds)
@@ -366,7 +410,7 @@ namespace WorkbenchApp.UITest.Pages
 
             // Try with javascript if Element Click Intercepted Exception
             IJavaScriptExecutor je = (IJavaScriptExecutor)Driver.Browser;
-            je.ExecuteScript("arguments[0].click();", Map.btnSignIn(timeoutInSeconds));
+            je.ExecuteScript("arguments[0].click();", Map.HighlightElement(Map.btnSignIn(timeoutInSeconds)));
             return this;
         }
 
@@ -410,98 +454,248 @@ namespace WorkbenchApp.UITest.Pages
         // verify elements
         public bool IsSearchBoxShown(int timeoutInSeconds)
         {
-            return Map.txtSearchBox(timeoutInSeconds).Displayed;
+            var iweb = Map.txtSearchBox(timeoutInSeconds);
+            bool element = iweb.Displayed;
+            if (element == false)
+            {
+                //Map.HighlightElement(iweb, "red", "setAttribute"); // keep highlight in red border if fail
+                Driver.TakeScreenShot("ss_IsSearchBoxShown" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                //Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public bool IsUploadButtonShown(int timeoutInSeconds)
         {
-            return Map.btnUpload(timeoutInSeconds).Displayed;
+            var iweb = Map.btnUpload(timeoutInSeconds);
+            bool element = iweb.Displayed;
+            if (element == false)
+            {
+                //Map.HighlightElement(iweb, "red", "setAttribute"); // keep highlight in red border if fail
+                Driver.TakeScreenShot("ss_IsUploadButtonShown" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                //Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
-        //public bool IsPiHeartIconShown(int timeoutInSeconds) // // KS-625 Remove this
-        //{
-        //    return Map.iconPiHeart(timeoutInSeconds).Displayed;
-        //}
-        //public bool IsPiBellIconShown(int timeoutInSeconds)
-        //{
-        //    return Map.iconPiBell(timeoutInSeconds).Displayed;
-        //}
-        //public bool IsPiQuestionCircleIconShown(int timeoutInSeconds)
-        //{
-        //    return Map.iconPiQuestionCircle(timeoutInSeconds).Displayed;
-        //}
         public bool IsUsernameAccountShown(int timeoutInSeconds)
         {
-            return Map.usernameAccount(timeoutInSeconds).Displayed;
+            var iweb = Map.usernameAccount(timeoutInSeconds);
+            bool element = iweb.Displayed;
+            if (element == false)
+            {
+                //Map.HighlightElement(iweb, "red", "setAttribute"); // keep highlight in red border if fail
+                Driver.TakeScreenShot("ss_IsUsernameAccountShown" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                //Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public bool IsAvatarImageShown(int timeoutInSeconds)
         {
-            return Map.imageAvatar(timeoutInSeconds).Displayed;
+            var iweb = Map.imageAvatar(timeoutInSeconds);
+            bool element = iweb.Displayed;
+            if (element == false)
+            {
+                //Map.HighlightElement(iweb, "red", "setAttribute"); // keep highlight in red border if fail
+                Driver.TakeScreenShot("ss_IsAvatarImageShown" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                //Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public bool IsFundSetupButtonShown(int timeoutInSeconds)
         {
-            return Map.btnFundSetup(timeoutInSeconds).Displayed;
+            var iweb = Map.btnFundSetup(timeoutInSeconds);
+            bool element = iweb.Displayed;
+            if (element == false)
+            {
+                //Map.HighlightElement(iweb, "red", "setAttribute"); // keep highlight in red border if fail
+                Driver.TakeScreenShot("ss_IsFundSetupButtonShown" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                //Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public bool IsOwnedbyKSCheckboxShown(int timeoutInSeconds)
         {
-            return Map.cbxOwnedbyKS(timeoutInSeconds).Displayed;
-        }
-        public string PageTitlesGetText(int timeoutInSeconds, int number)
+            var iweb = Map.cbxOwnedbyKS(timeoutInSeconds);
+            bool element = iweb.Displayed;
+            if (element == false)
+            {
+                //Map.HighlightElement(iweb, "red", "setAttribute"); // keep highlight in red border if fail
+                Driver.TakeScreenShot("ss_IsOwnedbyKSCheckboxShown" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                //Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
+        }  
+        public bool PageTitlesGetText(int timeoutInSeconds, int number, string textParam)
         {
-            return Map.titlesPage(timeoutInSeconds, number).Text;
+            var iweb = Map.titlesPage(timeoutInSeconds, number);
+            bool element = iweb.Text.Contains(textParam);
+            if (element == false)
+            {
+                //Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_PageTitlesGetText_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                //Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
-        public string MenuTitlesGetText(int timeoutInSeconds, int number)
+        public bool MenuTitlesGetText(int timeoutInSeconds, int number, string textParam)
         {
-            return Map.titlesMenu(timeoutInSeconds, number).Text;
+            var iweb = Map.titlesMenu(timeoutInSeconds, number);
+            bool element = iweb.Text.Contains(textParam);
+            if (element == false)
+            {
+                //Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_MenuTitlesGetText_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                //Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
-        public string ColumnChartTitleGetText(int timeoutInSeconds)
+        public bool ColumnChartTitleGetText(int timeoutInSeconds, string textParam)
         {
-            return Map.titleColumnChart(timeoutInSeconds).Text;
+            var iweb = Map.titleColumnChart(timeoutInSeconds);
+            bool element = iweb.Text.Contains(textParam);
+            if (element == false)
+            {
+                //Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_ColumnChartTitleGetText_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                //Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public bool IsColumnChartDropdownShown(int timeoutInSeconds)
         {
-            return Map.dropdownColumnChart(timeoutInSeconds).Displayed;
+            var iweb = Map.dropdownColumnChart(timeoutInSeconds);
+            bool element = iweb.Displayed;
+            if (element == false)
+            {
+                //Map.HighlightElement(iweb, "red", "setAttribute"); // keep highlight in red border if fail
+                Driver.TakeScreenShot("ss_IsColumnChartDropdownShown" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                //Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public bool IsHistoricalReturnsChartShown(int timeoutInSeconds)
         {
-            return Map.chartColumn(timeoutInSeconds).Displayed;
+            var iweb = Map.chartColumn(timeoutInSeconds);
+            bool element = iweb.Displayed;
+            if (element == false)
+            {
+                //Map.HighlightElement(iweb, "red", "setAttribute"); // keep highlight in red border if fail
+                Driver.TakeScreenShot("ss_IsHistoricalReturnsChartShown" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                //Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
-        public string ColumnChartNoteGetText(int timeoutInSeconds)
+        public bool ColumnChartNoteGetText(int timeoutInSeconds, string textParam)
         {
-            return Map.noteColumnChart(timeoutInSeconds).Text;
+            var iweb = Map.noteColumnChart(timeoutInSeconds);
+            bool element = iweb.Text.Contains(textParam);
+            if (element == false)
+            {
+                //Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_ColumnChartNoteGetText_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                //Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
-        public string PieChartTitleGetText(int timeoutInSeconds)
+        public bool PieChartTitleGetText(int timeoutInSeconds, string textParam)
         {
-            return Map.titlePieChart(timeoutInSeconds).Text;
+            var iweb = Map.titlePieChart(timeoutInSeconds);
+            bool element = iweb.Text.Contains(textParam);
+            if (element == false)
+            {
+                //Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_PieChartTitleGetText_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                //Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public bool IsPieChartShown(int timeoutInSeconds)
         {
-            return Map.chartPie(timeoutInSeconds).Displayed;
+            var iweb = Map.chartPie(timeoutInSeconds);
+            bool element = iweb.Displayed;
+            if (element == false)
+            {
+                //Map.HighlightElement(iweb, "red", "setAttribute"); // keep highlight in red border if fail
+                Driver.TakeScreenShot("ss_IsPieChartShown" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                //Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
-        public string PieChartNoteGetText(int timeoutInSeconds)
+        public bool PieChartNoteGetText(int timeoutInSeconds, string textParam)
         {
-            return Map.notePieChart(timeoutInSeconds).Text;
+            var iweb = Map.notePieChart(timeoutInSeconds);
+            bool element = iweb.Text.Contains(textParam);
+            if (element == false)
+            {
+                //Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_PieChartNoteGetText_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                //Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public bool IsAddFilterButtonShown(int timeoutInSeconds)
         {
-            return Map.btnAddFilter(timeoutInSeconds).Displayed;
+            var iweb = Map.btnAddFilter(timeoutInSeconds);
+            bool element = iweb.Displayed;
+            if (element == false)
+            {
+                //Map.HighlightElement(iweb, "red", "setAttribute"); // keep highlight in red border if fail
+                Driver.TakeScreenShot("ss_IsAddFilterButtonShown" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                //Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
-        public string ColumnNamesInAssetTableGetText(int timeoutInSeconds, int number)
+        public bool ColumnNamesInAssetTableGetText(int timeoutInSeconds, int number, string textParam)
         {
-            return Map.assetTableColumnNames(timeoutInSeconds, number).Text;
+            var iweb = Map.assetTableColumnNames(timeoutInSeconds, number);
+            bool element = iweb.Text.Contains(textParam);
+            if (element == false)
+            {
+                //Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_ColumnNamesInAssetTableGetText_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                //Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
-        public string RowValuesInAssetTableGetText(int timeoutInSeconds, int row, int column)
+        public bool RowValuesInAssetTableGetText(int timeoutInSeconds, int row, int column, string textParam)
         {
-            return Map.assetTableRowValues(timeoutInSeconds, row, column).Text;
+            var iweb = Map.assetTableRowValues(timeoutInSeconds, row, column);
+            bool element = iweb.Text.Contains(textParam);
+            if (element == false)
+            {
+                //Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_ColumnNamesInAssetTableGetText_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                //Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
 
         // Actions
         public LoginAction ClickFundSetupButton(int timeoutInSeconds)
         {
-            Map.btnFundSetup(timeoutInSeconds).Click();
+            Map.HighlightElement(Map.btnFundSetup(timeoutInSeconds)).Click();
             return this;
         }
         public LoginAction ClickOwnedbyKSCheckbox(int timeoutInSeconds)
         {
-            Map.cbxOwnedbyKS(timeoutInSeconds).Click();
+            Map.HighlightElement(Map.cbxOwnedbyKS(timeoutInSeconds)).Click();
             return this;
         }
         #endregion
@@ -585,6 +779,40 @@ namespace WorkbenchApp.UITest.Pages
                 Assert.Inconclusive("Something wrong with Microsoft Login! Please check console log.");
             }
 
+            return this;
+        }
+
+        public async Task<LoginAction> LoginMSAuthentcationAsync()
+        {
+            // Gọi phương thức Login (Microsoft.Identity.Client.AuthentcationResult) để lấy token
+            var authResult = await Config.LoginAsync(LoginPage.email, LoginPage.password, LoginPage.clientId, LoginPage.tenantId, LoginPage.redirectUri);
+            if (authResult != null)
+            {
+                // Lấy idToken & accessToken từ MSAL
+                string idToken = authResult.IdToken;
+                string accessToken = authResult.AccessToken;
+
+                // Mở site
+                NavigateSite(LoginPage.url);
+
+                // Inject token vào localStorage
+                IJavaScriptExecutor js = (IJavaScriptExecutor)Driver.Browser;
+                js.ExecuteScript($@"window.localStorage.setItem('loggedIn', 'true');
+                                        window.localStorage.setItem('msal.idtoken', '{idToken}');
+                                        window.localStorage.setItem('msal.{LoginPage.clientId}.idtoken', '{idToken}');
+                                        window.localStorage.setItem('msal.{LoginPage.clientId}.accesstoken', '{accessToken}');
+                                        window.localStorage.setItem('GenD_Authenticated', JSON.stringify({{""uniqueId"":""{authResult.Account.HomeAccountId.Identifier}"",""tokenType"":""id_token""}}));
+                                    ");
+
+                // Refresh lại để apply
+                Driver.Browser.Navigate().Refresh();
+
+                // Wait for Pie Chart, Asset and Total Endowment table are loaded Done
+                WaitForElementInvisible(30, LoginPage.pieChartGrayLoading);
+                WaitForElementVisible(30, LoginPage.pieChart);
+                WaitForElementVisible(30, LoginPage.assetTable);
+                WaitForElementVisible(30, LoginPage.totalEndowmentTable);
+            }
             return this;
         }
         #endregion

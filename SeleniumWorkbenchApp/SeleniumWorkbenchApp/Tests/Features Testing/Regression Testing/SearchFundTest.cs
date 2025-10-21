@@ -19,13 +19,14 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
         private string? summaryTC;
 
         [Test, Category("Regression Testing")]
-        public void TC001_SearchFund_Albourne_FundInfo()
+        public async Task TC001_SearchFund_Albourne_FundInfoAsync()
         {
             #region Variables declare
             string urlInstance = LoginPage.url;
             const string managerName = "Citadel Advisors LLC";
             const string fundName = "Citadel Multi Strategy Funds";
             const string sourceIcon = "A";
+            string videoFileName = "SearchFundTestTC001";
             #endregion
 
             #region Workflow scenario
@@ -33,9 +34,20 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             test = rep.CreateTest("WorkbenchApp - Search Fund Test - TC001");
             try
             {
-                // Log into the application
-                LoginAction.Instance.LoginSiteNoGodaddy(60, urlInstance);
+                // Start recording video
+                Driver.StartVideoRecord(videoFileName);
 
+                // Log into the application
+                // Check if the environment is Production (Godaddy) then use MSIdentityClientAuthentcation to login
+                if (urlInstance.Contains("ksbeimc"))
+                {
+                    await LoginAction.Instance.LoginMSAuthentcationAsync();
+                }
+                else
+                {
+                    LoginAction.Instance.LoginSiteNoGodaddy(60, urlInstance);
+                }
+                
                 // Search a Fund - Source = Albourne
                 SearchFundAction.Instance.InputNameToSearchFund(10, "cita")
                                          .WaitForElementVisible(10, SearchFundPage.fundNameReturnOfResultsWithItemSource(managerName, sourceIcon))
@@ -135,17 +147,17 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 {
                     // Upload Source: Manual
                     /// Exposure Manual (index = 1)
-                    verifyPoint = (rowCount = "1") == SearchFundAction.Instance.ValueDataStatusGetText(10, 1, SearchFundPage.rowCounts)
-                        && (startDate = "04/30/2020") == SearchFundAction.Instance.ValueDataStatusGetText(10, 1, SearchFundPage.startDate)
-                        && (endDate = "04/30/2020") == SearchFundAction.Instance.ValueDataStatusGetText(10, 1, SearchFundPage.endDate);
+                    verifyPoint = SearchFundAction.Instance.ValueDataStatusGetText(10, 1, SearchFundPage.rowCounts, rowCount = "1")
+                        && SearchFundAction.Instance.ValueDataStatusGetText(10, 1, SearchFundPage.startDate, startDate = "04/30/2020")
+                        && SearchFundAction.Instance.ValueDataStatusGetText(10, 1, SearchFundPage.endDate, endDate = "04/30/2020");
                     verifyPoints.Add(summaryTC = "Verify data in 'Data Status' - 'Upload Source: Manual' - Exposure: '" + rowCount + "'; '" + startDate + "'; '" + endDate + "'", verifyPoint);
                     ExtReportResult(verifyPoint, summaryTC);
 
                     /// Verify Fund Returns Manual (index = 2)
                     /// Fund AUM Manual (index = 3)
-                    verifyPoint = (rowCount = "285") == SearchFundAction.Instance.ValueDataStatusGetText(10, 3, SearchFundPage.rowCounts)
-                        && (startDate = "01/31/1998") == SearchFundAction.Instance.ValueDataStatusGetText(10, 3, SearchFundPage.startDate)
-                        && (endDate = "09/30/2021") == SearchFundAction.Instance.ValueDataStatusGetText(10, 3, SearchFundPage.endDate);
+                    verifyPoint = SearchFundAction.Instance.ValueDataStatusGetText(10, 3, SearchFundPage.rowCounts, rowCount = "285")
+                        && SearchFundAction.Instance.ValueDataStatusGetText(10, 3, SearchFundPage.startDate, startDate = "01/31/1998")
+                        && SearchFundAction.Instance.ValueDataStatusGetText(10, 3, SearchFundPage.endDate, endDate = "09/30/2021");
                     verifyPoints.Add(summaryTC = "Verify data in 'Data Status' - 'Upload Source: Manual' - Fund AUM: '" + rowCount + "'; '" + startDate + "'; '" + endDate + "'", verifyPoint);
                     ExtReportResult(verifyPoint, summaryTC);
 
@@ -170,9 +182,9 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 // Upload Source: Manual
                 /// Exposure Manual (index = 1) --> No verify
                 /// Fund Returns Manual (index = 2)
-                verifyPoint = (rowCount = "314") == SearchFundAction.Instance.ValueDataStatusGetText(10, 2, SearchFundPage.rowCounts)
-                        && (startDate = "07/31/1995") == SearchFundAction.Instance.ValueDataStatusGetText(10, 2, SearchFundPage.startDate)
-                        && (endDate = "08/31/2021") == SearchFundAction.Instance.ValueDataStatusGetText(10, 2, SearchFundPage.endDate);
+                verifyPoint = SearchFundAction.Instance.ValueDataStatusGetText(10, 2, SearchFundPage.rowCounts, rowCount = "314")
+                        && SearchFundAction.Instance.ValueDataStatusGetText(10, 2, SearchFundPage.startDate, startDate = "07/31/1995")
+                        && SearchFundAction.Instance.ValueDataStatusGetText(10, 2, SearchFundPage.endDate, endDate = "08/31/2021");
                 verifyPoints.Add(summaryTC = "Verify data in 'Data Status' - 'Upload Source: Manual' - Fund Returns: '" + rowCount + "'; '" + startDate + "'; '" + endDate + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 /// Fund AUM Manual (index = 3) --> No verify
@@ -181,21 +193,30 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 /// Exposure Albourne (index = 6) --> None
                 /// Fund Returns Albourne (index = 7)
                 verifyPoint = Convert.ToInt64(SearchFundAction.Instance.ValueDataStatusGetText(10, 7, SearchFundPage.rowCounts)) > 100
-                    && (startDate = "07/31/1995") == SearchFundAction.Instance.ValueDataStatusGetText(10, 7, SearchFundPage.startDate)
+                    && SearchFundAction.Instance.ValueDataStatusGetText(10, 7, SearchFundPage.startDate, startDate = "07/31/1995")
                     && SearchFundAction.Instance.ValueDataStatusGetText(10, 7, SearchFundPage.endDate).Contains(endDate="2025");
                 verifyPoints.Add(summaryTC = "Verify data in 'Data Status' - 'Upload Source: Albourne' - Fund Returns: 'RowCounts > 100'; '" + startDate + "'; 'EndDate contains (" + endDate + ")'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
                 /// Fund AUM Albourne (index = 8)
                 verifyPoint = Convert.ToInt64(SearchFundAction.Instance.ValueDataStatusGetText(10, 8, SearchFundPage.rowCounts)) > 100
-                    && (startDate = "01/31/1998") == SearchFundAction.Instance.ValueDataStatusGetText(10, 8, SearchFundPage.startDate)
-                    && SearchFundAction.Instance.ValueDataStatusGetText(10, 8, SearchFundPage.endDate).Contains(endDate="2024");
+                    && SearchFundAction.Instance.ValueDataStatusGetText(10, 8, SearchFundPage.startDate, startDate = "01/31/1998")
+                    && SearchFundAction.Instance.ValueDataStatusGetText(10, 8, SearchFundPage.endDate).Contains(endDate="202");
                 verifyPoints.Add(summaryTC = "Verify data in 'Data Status' - 'Upload Source: Albourne' - Fund AUM: 'RowCounts > 100'; '" + startDate + "'; 'EndDate contains (" + endDate + ")'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 #endregion
+
+                // Stop recording video
+                Driver.StopVideoRecord();
+
+                // Delete video file
+                Driver.DeleteFilesContainsName(Path.GetFullPath(@"../../../../../TestResults/"), videoFileName);
             }
             catch (Exception exception)
             {
+                // Stop recording video
+                Driver.StopVideoRecord();
+
                 // Print exception
                 System.Console.WriteLine(exception);
 
@@ -214,6 +235,7 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             const string managerName = "Prelude Capital";
             const string fundName = "Prelude Structured Alternatives Fund";
             const string sourceIcon = "M";
+            string videoFileName = "SearchFundTestTC002";
             #endregion
 
             #region Workflow scenario
@@ -221,6 +243,9 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             test = rep.CreateTest("WorkbenchApp - Search Fund Test - TC002");
             try
             {
+                // Start recording video
+                Driver.StartVideoRecord(videoFileName);
+
                 // Log into the application
                 LoginAction.Instance.LoginSiteNoGodaddy(60, urlInstance);
 
@@ -250,9 +275,18 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 verifyPoints.Add(summaryTC = "Verify Inception Date (Manual Albourne) is shown correctly after searching: " + value + "", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 #endregion
+
+                // Stop recording video
+                Driver.StopVideoRecord();
+
+                // Delete video file
+                Driver.DeleteFilesContainsName(Path.GetFullPath(@"../../../../../TestResults/"), videoFileName);
             }
             catch (Exception exception)
             {
+                // Stop recording video
+                Driver.StopVideoRecord();
+
                 // Print exception
                 System.Console.WriteLine(exception);
 
@@ -264,13 +298,14 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
         }
 
         [Test, Category("Regression Testing")]
-        public void TC003_SearchFund_Solovis_FundInfo()
+        public async Task TC003_SearchFund_Solovis_FundInfoAsync()
         {
             #region Variables declare
             string urlInstance = LoginPage.url;
             const string managerName = "Laurion Capital Management LP";
             const string fundName = "Laurion Capital Ltd.";
             const string sourceIcon = "S";
+            string videoFileName = "SearchFundTestTC003";
             #endregion
 
             #region Workflow scenario
@@ -278,8 +313,19 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             test = rep.CreateTest("WorkbenchApp - Search Fund Test - TC003");
             try
             {
+                // Start recording video
+                Driver.StartVideoRecord(videoFileName);
+
                 // Log into the application
-                LoginAction.Instance.LoginSiteNoGodaddy(60, urlInstance);
+                // Check if the environment is Production (Godaddy) then use MSIdentityClientAuthentcation to login
+                if (urlInstance.Contains("ksbeimc"))
+                {
+                    await LoginAction.Instance.LoginMSAuthentcationAsync();
+                }
+                else
+                {
+                    LoginAction.Instance.LoginSiteNoGodaddy(60, urlInstance);
+                }
 
                 // Search a Fund - Source = Solovis
                 SearchFundAction.Instance.InputNameToSearchFund(10, "laurion")
@@ -345,9 +391,18 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
 
                 #region Verify User Input
                 #endregion
+
+                // Stop recording video
+                Driver.StopVideoRecord();
+
+                // Delete video file
+                Driver.DeleteFilesContainsName(Path.GetFullPath(@"../../../../../TestResults/"), videoFileName);
             }
             catch (Exception exception)
             {
+                // Stop recording video
+                Driver.StopVideoRecord();
+
                 // Print exception
                 System.Console.WriteLine(exception);
 
@@ -359,13 +414,14 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
         }
 
         [Test, Category("Regression Testing")]
-        public void TC004_SearchFund_AEvestment_FundInfo()
+        public async Task TC004_SearchFund_AEvestment_FundInfoAsync()
         {
             #region Variables declare
             string urlInstance = LoginPage.url;
             const string managerName = "Amber Capital";
             const string fundName = "Amber European Long Opportunities Fund";
             const string sourceIcon = "E";
+            string videoFileName = "SearchFundTestTC004";
             #endregion
 
             #region Workflow scenario
@@ -373,8 +429,19 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             test = rep.CreateTest("WorkbenchApp - Search Fund Test - TC004");
             try
             {
+                // Start recording video
+                Driver.StartVideoRecord(videoFileName);
+
                 // Log into the application
-                LoginAction.Instance.LoginSiteNoGodaddy(60, urlInstance);
+                // Check if the environment is Production (Godaddy) then use MSIdentityClientAuthentcation to login
+                if (urlInstance.Contains("ksbeimc"))
+                {
+                    await LoginAction.Instance.LoginMSAuthentcationAsync();
+                }
+                else
+                {
+                    LoginAction.Instance.LoginSiteNoGodaddy(60, urlInstance);
+                }
 
                 // Search a Fund - Source = Evestment (Alternative Evestment)
                 SearchFundAction.Instance.InputNameToSearchFund(10, "amber")
@@ -410,9 +477,18 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 verifyPoints.Add(summaryTC = "Verify Management Fee (Alternative Evestment) is shown correctly after searching: " + value + "", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 #endregion
+
+                // Stop recording video
+                Driver.StopVideoRecord();
+
+                // Delete video file
+                Driver.DeleteFilesContainsName(Path.GetFullPath(@"../../../../../TestResults/"), videoFileName);
             }
             catch (Exception exception)
             {
+                // Stop recording video
+                Driver.StopVideoRecord();
+
                 // Print exception
                 System.Console.WriteLine(exception);
 
@@ -424,13 +500,14 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
         }
 
         [Test, Category("Regression Testing")]
-        public void TC005_SearchFund_TEvestment_FundInfo()
+        public async Task TC005_SearchFund_TEvestment_FundInfoAsync()
         {
             #region Variables declare
             string urlInstance = LoginPage.url;
             const string managerName = "John Hancock Investments";
             const string fundName = "John Hancock Multimanager Lifetime Portfolios 2035";
             const string sourceIcon = "E";
+            string videoFileName = "SearchFundTestTC005";
             #endregion
 
             #region Workflow scenario
@@ -438,8 +515,19 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             test = rep.CreateTest("WorkbenchApp - Search Fund Test - TC005");
             try
             {
+                // Start recording video
+                Driver.StartVideoRecord(videoFileName);
+
                 // Log into the application
-                LoginAction.Instance.LoginSiteNoGodaddy(60, urlInstance);
+                // Check if the environment is Production (Godaddy) then use MSIdentityClientAuthentcation to login
+                if (urlInstance.Contains("ksbeimc"))
+                {
+                    await LoginAction.Instance.LoginMSAuthentcationAsync();
+                }
+                else
+                {
+                    LoginAction.Instance.LoginSiteNoGodaddy(60, urlInstance);
+                }
 
                 // Search a Fund - Source = Evestment (Traditional Evestment)
                 SearchFundAction.Instance.InputNameToSearchFund(10, managerName)
@@ -475,9 +563,18 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 verifyPoints.Add(summaryTC = "Verify Management Fee (Traditional Evestment) is shown correctly after searching: " + value + "", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 #endregion
+
+                // Stop recording video
+                Driver.StopVideoRecord();
+
+                // Delete video file
+                Driver.DeleteFilesContainsName(Path.GetFullPath(@"../../../../../TestResults/"), videoFileName);
             }
             catch (Exception exception)
             {
+                // Stop recording video
+                Driver.StopVideoRecord();
+
                 // Print exception
                 System.Console.WriteLine(exception);
 
@@ -489,12 +586,13 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
         }
 
         [Test, Category("Regression Testing")]
-        public void TC006_SearchFund_Cambridge_FundInfo()
+        public async Task TC006_SearchFund_Cambridge_FundInfoAsync()
         {
             #region Variables declare
             string urlInstance = LoginPage.url;
             string cambridgeFund = "Spectrum Equity";
             const string sourceIcon = "C";
+            string videoFileName = "SearchFundTestTC006";
             #endregion
 
             #region Workflow scenario
@@ -502,8 +600,19 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             test = rep.CreateTest("WorkbenchApp - Search Fund Test - TC006");
             try
             {
+                // Start recording video
+                Driver.StartVideoRecord(videoFileName);
+
                 // Log into the application
-                LoginAction.Instance.LoginSiteNoGodaddy(60, urlInstance);
+                // Check if the environment is Production (Godaddy) then use MSIdentityClientAuthentcation to login
+                if (urlInstance.Contains("ksbeimc"))
+                {
+                    await LoginAction.Instance.LoginMSAuthentcationAsync();
+                }
+                else
+                {
+                    LoginAction.Instance.LoginSiteNoGodaddy(60, urlInstance);
+                }
 
                 // Search a Fund - Source = Albourne
                 SearchFundAction.Instance.InputNameToSearchFund(10, "spectrum eq")
@@ -620,14 +729,14 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 string rowCount, asOfDate, uploadDate;
                 // Upload Source: Manual
                 /// Deal Information
-                verifyPoint = (rowCount = "84") == SearchFundAction.Instance.ValueDataStatusPrivateGetText(10, 1, SearchFundPage.rowCount)
-                    && (asOfDate = "12/31/2021") == SearchFundAction.Instance.ValueDataStatusPrivateGetText(10, 1, SearchFundPage.asOfDate);
+                verifyPoint = SearchFundAction.Instance.ValueDataStatusPrivateGetText(10, 1, SearchFundPage.rowCount, rowCount = "84")
+                    && SearchFundAction.Instance.ValueDataStatusPrivateGetText(10, 1, SearchFundPage.asOfDate, asOfDate = "12/31/2021");
                 verifyPoints.Add(summaryTC = "Verify data in 'Data Status' - 'Upload Source: Manual' - Deal Information: '" + rowCount + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
                 /// Fund Information
-                verifyPoint = (rowCount = "10") == SearchFundAction.Instance.ValueDataStatusPrivateGetText(10, 2, SearchFundPage.rowCount)
-                    && (asOfDate = "12/31/2021") == SearchFundAction.Instance.ValueDataStatusPrivateGetText(10, 2, SearchFundPage.asOfDate);
+                verifyPoint = SearchFundAction.Instance.ValueDataStatusPrivateGetText(10, 2, SearchFundPage.rowCount, rowCount = "10")
+                    && SearchFundAction.Instance.ValueDataStatusPrivateGetText(10, 2, SearchFundPage.asOfDate, asOfDate = "12/31/2021");
                 verifyPoints.Add(summaryTC = "Verify data in 'Data Status' - 'Upload Source: Manual' - Fund Information: '" + rowCount + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
@@ -640,9 +749,18 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 ExtReportResult(verifyPoint, summaryTC);
 
                 #endregion
+
+                // Stop recording video
+                Driver.StopVideoRecord();
+
+                // Delete video file
+                Driver.DeleteFilesContainsName(Path.GetFullPath(@"../../../../../TestResults/"), videoFileName);
             }
             catch (Exception exception)
             {
+                // Stop recording video
+                Driver.StopVideoRecord();
+
                 // Print exception
                 System.Console.WriteLine(exception);
 
@@ -664,6 +782,7 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             string? fundId = null;
             string? index = null;
             string? feeTermCatchUp = null;
+            string videoFileName = "SearchFundTestTC007";
             #endregion
 
             #region Workflow scenario
@@ -671,6 +790,9 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             test = rep.CreateTest("WorkbenchApp -Search Fund Test - TC007");
             try
             {
+                // Start recording video
+                Driver.StartVideoRecord(videoFileName);
+
                 // Log into the application
                 LoginAction.Instance.LoginSiteNoGodaddy(60, urlInstance);
 
@@ -739,170 +861,179 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 #endregion
 
                 #region Verify data at 'Fund List' & 'Status' dropdown
-                verifyPoint = (data = "3 - Memo") == PipelineAction.Instance.PipelineStatusDropdownGetText(10);
+                verifyPoint = PipelineAction.Instance.PipelineStatusDropdownGetText(10, data = "3 - Memo");
                 verifyPoints.Add(summaryTC = "Verify data at 'Pipeline Status' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 #endregion
 
                 #region Verify data at 'General' section
-                verifyPoint = (data = managerName) == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundManagerNoRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundManagerNoRequired, data = managerName);
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Fund Manager' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "129 Cleeland St\r\nDandenong, VIC 3175\r\nAustralia") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.businessAddress)
-                           || (data = "129 Cleeland Street, Dandenong VIC 3175, Australia") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.businessAddress);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.businessAddress, data = "129 Cleeland St\r\nDandenong, VIC 3175\r\nAustralia")
+                           || PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.businessAddress, data = "129 Cleeland Street, Dandenong VIC 3175, Australia");
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Business Address' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Hoi An") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.primaryContactFirstLastNoRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.primaryContactFirstLastNoRequired, data = "Hoi An");
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Primary Contact First Last' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "test01Cnext@yahoo.com") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.primaryContactEmail);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.primaryContactEmail, data = "test01Cnext@yahoo.com");
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Primary Contact Email' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "112233445566") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.businessPhone);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.businessPhone, data = "112233445566");
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Business Phone' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = fundName) == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundNameNoRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundNameNoRequired, data = fundName);
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Fund Name' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "General") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundLiquidityTypeNoRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundLiquidityTypeNoRequired, data = "General");
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Fund Liquidity Type' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Description " + fundName) == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.descriptionRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.descriptionRequired, data = "Description " + fundName);
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Description' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Domestic Equity") == PipelineAction.Instance.LabelDropdownValueGetText(10, PipelinePage.lowestLevelSubAssetClassNoRequired);
+                verifyPoint = PipelineAction.Instance.LabelDropdownValueGetText(10, PipelinePage.lowestLevelSubAssetClassNoRequired, data = "Domestic Equity");
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Lowest Level Sub-Asset Class' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Public Equities") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.assetClassNoRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.assetClassNoRequired, data = "Public Equities");
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Asset Class' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Domestic Equity") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundSubAssetClassLevel1NoRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundSubAssetClassLevel1NoRequired, data = "Domestic Equity");
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Fund Sub Asset Class Level 1' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Domestic Equity") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundSubAssetClassLevel2NoRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundSubAssetClassLevel2NoRequired, data = "Domestic Equity");
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Fund Sub Asset Class Level 2' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Financials") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.sectorRequired, "1");
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.sectorRequired, "1", data = "Financials");
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Sector' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Developed Markets") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.geographyRequired, "1");
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.geographyRequired, "1", data = "Developed Markets");
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Geography' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 #endregion
 
                 #region Verify data at 'Process' section
-                verifyPoint = (data = "Ly Nguyen") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.primaryResponsibleNoRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.primaryResponsibleNoRequired, data = "Ly Nguyen");
                 verifyPoints.Add(summaryTC = "Verify data at 'Process' - 'Primary Responsible' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Thuyen Nguyen") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.secondaryResponsible);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.secondaryResponsible, data = "Thuyen Nguyen");
                 verifyPoints.Add(summaryTC = "Verify data at 'Process' - 'Secondary Responsible' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "03/15/2024") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.targetCloseDate);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.targetCloseDate, data = "03/15/2024");
                 verifyPoints.Add(summaryTC = "Verify data at 'Process' - 'Target Close Date' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "03/15/2024") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.docsDueDate);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.docsDueDate, data = "03/15/2024");
                 verifyPoints.Add(summaryTC = "Verify data at 'Process' - 'Docs Due Date' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "19") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundingAmount);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundingAmount, data = "19");
                 verifyPoints.Add(summaryTC = "Verify data at 'Process' - 'Funding Amount' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Observer") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.lpacSeat);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.lpacSeat, data = "Observer");
                 verifyPoints.Add(summaryTC = "Verify data at 'Process' - 'LPAC Seat' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "AUD") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.reportingCurrency);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.reportingCurrency, data = "AUD");
                 verifyPoints.Add(summaryTC = "Verify data at 'Process' - 'Reporting Currency' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "199") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.closedSize);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.closedSize, data = "199");
                 verifyPoints.Add(summaryTC = "Verify data at 'Process' - 'Closed Size' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "2024") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.vintageYear);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.vintageYear, data = "2024");
                 verifyPoints.Add(summaryTC = "Verify data at 'Process' - 'Vintage Year/ Inception Year' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 #endregion
 
                 #region Verify data at 'Custom Risk Benchmark and Risk' section
-                verifyPoint = (data = "20") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.trackingErrorRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.trackingErrorRequired, data = "20");
                 verifyPoints.Add(summaryTC = "Verify data at 'Custom Risk Benchmark and Risk' - 'Tracking Error' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 #endregion
 
                 #region Verify data at 'Fee Term' section
-                verifyPoint = (data = "21") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.managementFeeRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.managementFeeRequired, data = "21");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Management Fee' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Monthly") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.managementFeePaidRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.managementFeePaidRequired, data = "Monthly");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Management Fee Paid' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "22") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.performanceFeeRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.performanceFeeRequired, data = "22");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Performance Fee' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "true") == PipelineAction.Instance.LabelCheckboxFieldGetText(10, PipelinePage.highWaterMark);
+                verifyPoint = PipelineAction.Instance.LabelCheckboxFieldGetText(10, PipelinePage.highWaterMark, data = "true");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'highWaterMark' checkbox is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = feeTermCatchUp) == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.catchUpRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.catchUpRequired, data = feeTermCatchUp);
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Catch Up' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "23") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.catchUpPercAgeIfSoftRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.catchUpPercAgeIfSoftRequired, data = "23");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Catch Up Perc Age If Soft' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "1") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.crystallizationEveryXYearsRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.crystallizationEveryXYearsRequired, data = "1");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Crystallization Every X Years' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "true") == PipelineAction.Instance.LabelCheckboxFieldGetText(10, PipelinePage.hurdleStatus);
+                verifyPoint = PipelineAction.Instance.LabelCheckboxFieldGetText(10, PipelinePage.hurdleStatus, data = "true");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Hurdle Status' checkbox is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Fixed") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.hurdleFixedOrRelativeRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.hurdleFixedOrRelativeRequired, data = "Fixed");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Hurdle Fixed Or Relative *' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "24") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.hurdleRatePerc);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.hurdleRatePerc, data = "24");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Hurdle Rate (%)' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Hard Hurdle") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.hurdleTypeRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.hurdleTypeRequired, data = "Hard Hurdle");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Hurdle Type' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "NAV Dependent") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.rampTypeRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.rampTypeRequired, data = "NAV Dependent");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Ramp Type' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 #endregion
 
                 #region Verify data at 'Liquidity' section
-                verifyPoint = (data = "Hard") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.lockupRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.lockupRequired, data = "Hard");
                 verifyPoints.Add(summaryTC = "Verify data at 'Liquidity' - 'Lockup' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "25") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.lockupLengthMonthsRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.lockupLengthMonthsRequired, data = "25");
                 verifyPoints.Add(summaryTC = "Verify data at 'Liquidity' - 'Lockup Length Months' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Monthly") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.liqudityFrequencyRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.liqudityFrequencyRequired, data = "Monthly");
                 verifyPoints.Add(summaryTC = "Verify data at 'Liquidity' - 'Liqudity Frequency' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "26") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.noticeDaysRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.noticeDaysRequired, data = "26");
                 verifyPoints.Add(summaryTC = "Verify data at 'Liquidity' - 'Notice Days' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "27") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.investorGateRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.investorGateRequired, data = "27");
                 verifyPoints.Add(summaryTC = "Verify data at 'Liquidity' - 'Investor Gate' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.softLockupRedemptionFeePerc); // KS-742
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.softLockupRedemptionFeePerc, data = ""); // KS-742
                 verifyPoints.Add(summaryTC = "Verify data at 'Liquidity' - 'Soft Lockup Redemption Fee %' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "29") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.receiptDaysRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.receiptDaysRequired, data = "29");
                 verifyPoints.Add(summaryTC = "Verify data at 'Liquidity' - 'Receipt Days' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "30") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.holdbackRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.holdbackRequired, data = "30");
                 verifyPoints.Add(summaryTC = "Verify data at 'Liquidity' - 'Holdback' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "31") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.liquidityNote);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.liquidityNote, data = "31");
                 verifyPoints.Add(summaryTC = "Verify data at 'Liquidity' - 'Liquidity Note' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "50%") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.sidepocketProbability);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.sidepocketProbability, data = "50%");
                 verifyPoints.Add(summaryTC = "Verify data at 'Liquidity' - 'Sidepocket Probability' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "32") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.maxPercOfSidepocketPermitted);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.maxPercOfSidepocketPermitted, data = "32");
                 verifyPoints.Add(summaryTC = "Verify data at 'Liquidity' - 'Max % of Sidepocket Permitted' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 #endregion
+
+                // Stop recording video
+                Driver.StopVideoRecord();
+
+                // Delete video file
+                Driver.DeleteFilesContainsName(Path.GetFullPath(@"../../../../../TestResults/"), videoFileName);
             }
             catch (Exception exception)
             {
+                // Stop recording video
+                Driver.StopVideoRecord();
+
                 // Print exception
                 System.Console.WriteLine(exception);
 
@@ -928,6 +1059,7 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             string? businessAddressGeneral = null;
             string? reportingCurrencyProcess = null;
             string? feeTermCatchUp = null;
+            string videoFileName = "SearchFundTestTC008";
             #endregion
 
             #region Workflow scenario
@@ -935,6 +1067,9 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             test = rep.CreateTest("WorkbenchApp -Search Fund Test - TC008");
             try
             {
+                // Start recording video
+                Driver.StartVideoRecord(videoFileName);
+
                 // Log into the application
                 LoginAction.Instance.LoginSiteNoGodaddy(60, urlInstance);
 
@@ -1007,156 +1142,165 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 #endregion
 
                 #region Verify data at 'Fund List' & 'Status' dropdown
-                verifyPoint = (data = fundName) == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundList);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundList, data = fundName);
                 verifyPoints.Add(summaryTC = "Verify data at 'Fund List' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "4 - RFA") == PipelineAction.Instance.PipelineStatusDropdownGetText(10);
+                verifyPoint = PipelineAction.Instance.PipelineStatusDropdownGetText(10, data = "4 - RFA");
                 verifyPoints.Add(summaryTC = "Verify data at 'Pipeline Status' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 #endregion
 
                 #region Verify data at 'General' section
-                verifyPoint = (data = managerName) == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundManagerNoRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundManagerNoRequired, data = managerName);
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Fund Manager' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = businessAddressGeneral) == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.businessAddress)
-                           || (data = "129 Cleeland St Dandenong, VIC 3175 Australia") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.businessAddress)
-                           || (data = "129 Cleeland St\r\nDandenong, VIC 3175\r\nAustralia") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.businessAddress);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.businessAddress, data = businessAddressGeneral)
+                           || PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.businessAddress, data = "129 Cleeland St Dandenong, VIC 3175 Australia")
+                           || PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.businessAddress, data = "129 Cleeland St\r\nDandenong, VIC 3175\r\nAustralia");
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Business Address' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Kathleen Bui") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.primaryContactFirstLastNoRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.primaryContactFirstLastNoRequired, data = "Kathleen Bui");
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Primary Contact First Last' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "kabui@ksbe.edux") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.primaryContactEmail);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.primaryContactEmail, data = "kabui@ksbe.edux");
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Primary Contact Email' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "112233445566") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.businessPhone);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.businessPhone, data = "112233445566");
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Business Phone' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = fundName) == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundNameNoRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundNameNoRequired, data = fundName);
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Fund Name' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Drawdown") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundLiquidityTypeNoRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundLiquidityTypeNoRequired, data = "Drawdown");
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Fund Liquidity Type' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Description " + fundName) == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.descriptionRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.descriptionRequired, data = "Description " + fundName);
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Description' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "US Venture Capital") == PipelineAction.Instance.LabelDropdownValueGetText(10, PipelinePage.lowestLevelSubAssetClassNoRequired);
+                verifyPoint = PipelineAction.Instance.LabelDropdownValueGetText(10, PipelinePage.lowestLevelSubAssetClassNoRequired, data = "US Venture Capital");
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Lowest Level Sub-Asset Class' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Private Equity") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.assetClassNoRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.assetClassNoRequired, data = "Private Equity");
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Asset Class' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Venture Capital") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundSubAssetClassLevel1NoRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundSubAssetClassLevel1NoRequired, data = "Venture Capital");
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Fund Sub Asset Class Level 1' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "US Venture Capital") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundSubAssetClassLevel2NoRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundSubAssetClassLevel2NoRequired, data = "US Venture Capital");
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Fund Sub Asset Class Level 2' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Health Care") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.sectorRequired, "1");
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.sectorRequired, "1", data = "Health Care");
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Sector' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "United States") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.geographyRequired, "1");
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.geographyRequired, "1", data = "United States");
                 verifyPoints.Add(summaryTC = "Verify data at 'General' - 'Geography' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 #endregion
 
                 #region Verify data at 'Process' section
-                verifyPoint = (data = "Ly Nguyen") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.primaryResponsibleNoRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.primaryResponsibleNoRequired, data = "Ly Nguyen");
                 verifyPoints.Add(summaryTC = "Verify data at 'Process' - 'Primary Responsible' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Thuyen Nguyen") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.secondaryResponsible);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.secondaryResponsible, data = "Thuyen Nguyen");
                 verifyPoints.Add(summaryTC = "Verify data at 'Process' - 'Secondary Responsible' dropdown is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "03/15/2024") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.targetCloseDate);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.targetCloseDate, data = "03/15/2024");
                 verifyPoints.Add(summaryTC = "Verify data at 'Process' - 'Target Close Date' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "03/15/2024") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.docsDueDate);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.docsDueDate, data = "03/15/2024");
                 verifyPoints.Add(summaryTC = "Verify data at 'Process' - 'Docs Due Date' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Full") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.lpacSeatRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.lpacSeatRequired, data = "Full");
                 verifyPoints.Add(summaryTC = "Verify data at 'Process' - 'LPAC Seat' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = reportingCurrencyProcess == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.reportingCurrency);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.reportingCurrency, reportingCurrencyProcess);
                 verifyPoints.Add(summaryTC = "Verify data at 'Process' - 'Reporting Currency' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "19") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundingAmount);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundingAmount, data = "19");
                 verifyPoints.Add(summaryTC = "Verify data at 'Process' - 'Funding Amount' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "18") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.closedSize);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.closedSize, data = "18");
                 verifyPoints.Add(summaryTC = "Verify data at 'Process' - 'Closed size' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "2017") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.vintageYear);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.vintageYear, data = "2017");
                 verifyPoints.Add(summaryTC = "Verify data at 'Process' - 'Vintage Year' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 #endregion
 
                 #region Verify data at 'Custom Risk Benchmark and Risk' section
-                verifyPoint = (data = "20") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.trackingError); // KS-743
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.trackingError, data = "20"); // KS-743
                 verifyPoints.Add(summaryTC = "Verify data at 'Custom Risk Benchmark and Risk' - 'Tracking Error' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 #endregion
 
                 #region Verify data at 'Fee Term' section
-                verifyPoint = (data = "21") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.mgtFeeDuringInvestmentPeriodRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.mgtFeeDuringInvestmentPeriodRequired, data = "21");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Mgt Fee During Investment Period' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Committed Capital") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.mgtFeeDuringInvestmentPeriodOnRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.mgtFeeDuringInvestmentPeriodOnRequired, data = "Committed Capital");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Mgt Fee During Investment Period On' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Yes") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.stepUpDownDuringInvestmentPeriodRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.stepUpDownDuringInvestmentPeriodRequired, data = "Yes");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Step Up/Down During Investment Period' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "22") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.stepUpDownDuringTheInvestmentPeriod);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.stepUpDownDuringTheInvestmentPeriod, data = "22");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Step Up/Down During The Investment Period' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "23") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.mgtFeeFloorDuringInvestmentPeriodRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.mgtFeeFloorDuringInvestmentPeriodRequired, data = "23");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Mgt Fee Floor During Investment Period' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "24") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.mgtFeeAfterInvestmentPeriodRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.mgtFeeAfterInvestmentPeriodRequired, data = "24");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Mgt Fee After Investment Period' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Invested Capital") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.mgtFeeAfterInvestmentPeriodOnRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.mgtFeeAfterInvestmentPeriodOnRequired, data = "Invested Capital");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Mgt Fee After Investment Period On' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "No") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.stepUpDownAfterInvestmentPeriodRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.stepUpDownAfterInvestmentPeriodRequired, data = "No");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Step Up/Down After Investment Period' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.stepUpDownRateAfterInvestmentPeriod);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.stepUpDownRateAfterInvestmentPeriod, data = "");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Step Up/Down Rate After Investment Period' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.mgtFeeFloorAfterInvestmentPeriod);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.mgtFeeFloorAfterInvestmentPeriod, data = "");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Mgt Fee Floor After Investment Period' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "25") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.gPCarryRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.gPCarryRequired, data = "25");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'GP Carry' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Gross") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.carryGrossOrNetRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.carryGrossOrNetRequired, data = "Gross");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Carry Gross or Net' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "26") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.preferredReturnIfNoPreferredReturnEnter0PercRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.preferredReturnIfNoPreferredReturnEnter0PercRequired, data = "26");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Preferred Return (if no preferred return, enter 0%)' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = feeTermCatchUp) == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.catchUpRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.catchUpRequired, data = feeTermCatchUp);
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Catch Up' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Yes") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.stepupCarryRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.stepupCarryRequired, data = "Yes");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Stepup Carry' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "28") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.stepupCarryPercRequired);
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.stepupCarryPercRequired, data = "28");
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Stepup Carry %' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "29") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundTermYears); // KS-738
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.fundTermYears, data = "29"); // KS-738
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Fund Term (Years)' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "30") == PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.investmentPeriodYears); // KS-738
+                verifyPoint = PipelineAction.Instance.LabelInputFieldGetText(10, PipelinePage.investmentPeriodYears, data = "30"); // KS-738
                 verifyPoints.Add(summaryTC = "Verify data at 'Fee Term' - 'Investment Period (Years)' field is shown correctly after searching: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 #endregion
+
+                // Stop recording video
+                Driver.StopVideoRecord();
+
+                // Delete video file
+                Driver.DeleteFilesContainsName(Path.GetFullPath(@"../../../../../TestResults/"), videoFileName);
             }
             catch (Exception exception)
             {
+                // Stop recording video
+                Driver.StopVideoRecord();
+
                 // Print exception
                 System.Console.WriteLine(exception);
 

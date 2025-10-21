@@ -57,7 +57,7 @@ namespace WorkbenchApp.UITest.Pages
         internal static By pipelineLinkBtn = By.XPath("//button[@label='Pipeline Link']");
         internal static By pipelineStatusDropdownBtn = By.XPath("//button[contains(@class,'splitbutton')][1]");
         internal static By pipelineStatusDropdownTxt = By.XPath(pipelineStatusDropdownBtn.ToString().Remove(0, 10) +  "/span");
-        internal static By saveBtn = By.XPath(@"//div[contains(@class,'custom-grid')][2]//button[@label='Save']");
+        internal static By saveBtn = By.XPath(@"//div[contains(@class,'custom-grid')]//button[@label='Save']"); // old: ...[2]//button[@label='Save']
         internal static By buttonLinkInDropdown(string linkName) => By.XPath(@"//button[.='" + linkName + "']");
         internal static By labelInputField(string label) => By.XPath(@"//label[.='" + label + "']/ancestor::div[position() = 2]//*[local-name()='input' or local-name()='textarea']");
         internal static By labelInputFieldListTxt(string label, string index) => By.XPath(labelInputField(label).ToString().Remove(0, 10) + "/ancestor::ul[position() = 1]/li[" + index + "]/span[contains(@class,'label')]");
@@ -69,6 +69,26 @@ namespace WorkbenchApp.UITest.Pages
         internal static By toastMessage(string text) => By.XPath(@"//p-toastitem[contains(@class,'toastAnimation')]//div[.='" + text + "']");
 
         // Initiate the elements
+        public IWebElement HighlightElement(IWebElement element, string? color = null, string? setOrRemoveAttr = null)
+        {
+            color ??= "blue";
+            setOrRemoveAttr ??= "remove"; // chỉ định hành động "remove" hoặc "keep"
+
+            IJavaScriptExecutor js = (IJavaScriptExecutor)Driver.Browser;
+
+            // Highlight
+            js.ExecuteScript("arguments[0].setAttribute('style', arguments[1]);", element, "border: 3px solid " + color + ";");
+            Thread.Sleep(150);
+
+            // Unhighlight nếu setOrRemoveAttr = "remove"
+            if (setOrRemoveAttr.Equals("remove", StringComparison.OrdinalIgnoreCase))
+            {
+                js.ExecuteScript("arguments[0].removeAttribute('style');", element);
+            }
+
+            return element;
+        }
+
         public IWebElement dropdownIconLowestAssetClass(int timeoutInSeconds)
         {
             wait = new WebDriverWait(Driver.Browser, TimeSpan.FromSeconds(timeoutInSeconds));
@@ -214,27 +234,78 @@ namespace WorkbenchApp.UITest.Pages
         }
 
         // verify elements
-        public string LabelInputFieldGetText(int timeoutInSeconds, string label)
+        public bool LabelInputFieldGetText(int timeoutInSeconds, string label, string textParam)
         {
-            return Map.inputFieldLabel(timeoutInSeconds, label).GetAttribute("value");
+            ScrollIntoView(Map.inputFieldLabel(timeoutInSeconds, label));
+            var iweb = Map.inputFieldLabel(timeoutInSeconds, label);
+            bool element = Map.HighlightElement(iweb, "green").GetAttribute("value").Contains(textParam);
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_GetText_" + label + "_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
-        public string LabelInputFieldGetText(int timeoutInSeconds, string label, string index)
+        public bool LabelInputFieldGetText(int timeoutInSeconds, string label, string index, string textParam)
         {
-            return Map.inputFieldLabel(timeoutInSeconds, label, index).Text;
+            ScrollIntoView(Map.inputFieldLabel(timeoutInSeconds, label, index));
+            var iweb = Map.inputFieldLabel(timeoutInSeconds, label, index);
+            bool element = Map.HighlightElement(iweb, "green").Text.Contains(textParam);
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_GetText_" + label + "_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
-        public string LabelCheckboxFieldGetText(int timeoutInSeconds, string label)
+        public bool LabelCheckboxFieldGetText(int timeoutInSeconds, string label, string textParam)
         {
-            return Map.inputFieldLabel(timeoutInSeconds, label).GetAttribute("aria-checked");
+            ScrollIntoView(Map.inputFieldLabel(timeoutInSeconds, label));
+            var iweb = Map.inputFieldLabel(timeoutInSeconds, label);
+            bool element = Map.HighlightElement(iweb, "green").GetAttribute("aria-checked").Contains(textParam);
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_CheckboxGetText_" + label + "_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
-        public string PipelineStatusDropdownGetText(int timeoutInSeconds)
+        public bool PipelineStatusDropdownGetText(int timeoutInSeconds, string textParam)
         {
-            return Map.txtDropdownPipelineStatus(timeoutInSeconds).Text;
+            ScrollIntoView(Map.txtDropdownPipelineStatus(timeoutInSeconds));
+            var iweb = Map.txtDropdownPipelineStatus(timeoutInSeconds);
+            bool element = Map.HighlightElement(iweb, "green").Text.Contains(textParam);
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_PipelineStatusDropdownGetText_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
-        public string LabelDropdownValueGetText(int timeoutInSeconds, string label)
+        public bool LabelDropdownValueGetText(int timeoutInSeconds, string label, string textParam)
         {
-            return Map.dropdownLabelTextValue(timeoutInSeconds, label).Text; //.GetAttribute("value");
+            ScrollIntoView(Map.dropdownLabelTextValue(timeoutInSeconds, label));
+            var iweb = Map.dropdownLabelTextValue(timeoutInSeconds, label);
+            bool element = Map.HighlightElement(iweb, "green").Text.Contains(textParam);
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_Dropdown_" + label + "_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
 
+        // Actions
         /// scroll to element with JavaScript
         public PipelineAction ScrollIntoView(IWebElement iwebE)
         {
@@ -258,52 +329,52 @@ namespace WorkbenchApp.UITest.Pages
         }
         public PipelineAction ClickLowestAssetClassDropdownIcon(int timeoutInSeconds)
         {
-            this.Map.dropdownIconLowestAssetClass(timeoutInSeconds).Click();
+            Map.HighlightElement(Map.dropdownIconLowestAssetClass(timeoutInSeconds)).Click();
             return this;
         }
         public PipelineAction ClickLabelDropdown(int timeoutInSeconds, string label)
         {
             //this.Map.dropdownLabel(timeoutInSeconds, label).Click(); Thread.Sleep(500);
             Actions actions = new Actions(Driver.Browser);
-            actions.Click(this.Map.dropdownLabel(timeoutInSeconds, label)).Build().Perform(); Thread.Sleep(500);
+            actions.Click(Map.HighlightElement(Map.dropdownLabel(timeoutInSeconds, label))).Build().Perform(); Thread.Sleep(500);
             int time = 0;
             while (GeneralAction.Instance.IsElementPresent(General.overlayDropdown) == false && time < timeoutInSeconds)
             {
                 if (GeneralAction.Instance.IsElementPresent(General.overlayDropdown) == true) { break; }
                 if (time == timeoutInSeconds) { Console.WriteLine("Timeout - Click dropdown failed!"); }
                 //this.Map.dropdownLabel(timeoutInSeconds, label).Click(); Thread.Sleep(1000);
-                actions.Click(this.Map.dropdownLabel(timeoutInSeconds, label)).Build().Perform(); Thread.Sleep(250);
+                actions.Click(Map.HighlightElement(Map.dropdownLabel(timeoutInSeconds, label))).Build().Perform(); Thread.Sleep(250);
                 time++;
             }
             return this;
         }
         public PipelineAction ClickToSelectItemInDropdown(int timeoutInSeconds, string item)
         {
-            ScrollIntoView(this.Map.dropdownItem(timeoutInSeconds, item));
+            ScrollIntoView(Map.dropdownItem(timeoutInSeconds, item));
             //IJavaScriptExecutor je = (IJavaScriptExecutor)Driver.Browser;
             //je.ExecuteScript("arguments[0].click();", this.Map.dropdownItem(timeoutInSeconds, item));
             Actions actions = new Actions(Driver.Browser);
-            actions.Click(this.Map.dropdownItem(timeoutInSeconds, item)).Build().Perform();
+            actions.Click(Map.HighlightElement(Map.dropdownItem(timeoutInSeconds, item))).Build().Perform();
             return this;
         }
         public PipelineAction ClickRemoveInputTextIndexDropdownLabelButton(int timeoutInSeconds, string label, string index)
         {
-            this.Map.btnRemoveInputTextIndexDropdownLabel(timeoutInSeconds, label, index).Click();
+            Map.HighlightElement(Map.btnRemoveInputTextIndexDropdownLabel(timeoutInSeconds, label, index)).Click();
             PressTabKeyboard();
             return this;
         }
         public PipelineAction ClickPipelineLink(int timeoutInSeconds)
         {
-            this.Map.btnPipelineLink(timeoutInSeconds).Click();
+            Map.HighlightElement(Map.btnPipelineLink(timeoutInSeconds)).Click();
             return this;
         }
         public PipelineAction ClickPipelineStatusDropdownButton(int timeoutInSeconds)
         {
-            this.Map.btnPipelineStatusDropdown(timeoutInSeconds).Click(); Thread.Sleep(1000);
+            Map.HighlightElement(Map.btnPipelineStatusDropdown(timeoutInSeconds)).Click(); Thread.Sleep(1000);
             int time = 0;
             while (GeneralAction.Instance.IsElementPresent(General.overlayDropdown) == false && time < timeoutInSeconds)
             {
-                this.Map.btnPipelineStatusDropdown(timeoutInSeconds).Click(); Thread.Sleep(1000);
+                Map.HighlightElement(Map.btnPipelineStatusDropdown(timeoutInSeconds)).Click(); Thread.Sleep(1000);
                 if (GeneralAction.Instance.IsElementPresent(General.overlayDropdown) == true) { break; }
                 if (time == timeoutInSeconds) { Console.WriteLine("Timeout - Click 'Pipeline Status' dropdown failed!"); }
                 time++;
@@ -312,29 +383,29 @@ namespace WorkbenchApp.UITest.Pages
         }
         public PipelineAction ClickSaveButton(int timeoutInSeconds)
         {
-            ScrollIntoView(this.Map.btnSave(timeoutInSeconds));
-            this.Map.btnSave(timeoutInSeconds).Click();
+            ScrollIntoView(Map.btnSave(timeoutInSeconds));
+            Map.HighlightElement(Map.btnSave(timeoutInSeconds)).Click();
             return this;
         }
         public PipelineAction ClickButtonLinkInDropdown(int timeoutInSeconds, string linkName)
         {
-            ScrollIntoView(this.Map.btnLinkInDropdown(timeoutInSeconds, linkName));
-            this.Map.btnLinkInDropdown(timeoutInSeconds, linkName).Click();
+            ScrollIntoView(Map.btnLinkInDropdown(timeoutInSeconds, linkName));
+            Map.HighlightElement(Map.btnLinkInDropdown(timeoutInSeconds, linkName)).Click();
             return this;
         }
         public PipelineAction InputFieldLabel(int timeoutInSeconds, string label, string txt)
         {
-            this.Map.inputFieldLabel(timeoutInSeconds, label).Clear();
-            this.Map.inputFieldLabel(timeoutInSeconds, label).SendKeys(txt); Thread.Sleep(250);
+            Map.HighlightElement(Map.inputFieldLabel(timeoutInSeconds, label)).Clear();
+            Map.HighlightElement(Map.inputFieldLabel(timeoutInSeconds, label)).SendKeys(txt); Thread.Sleep(250);
             return this;
         }
         public PipelineAction ClickInputFieldLabel(int timeoutInSeconds, string label)
         {
-            this.Map.inputFieldLabel(timeoutInSeconds, label).Click(); Thread.Sleep(500);
+            Map.HighlightElement(Map.inputFieldLabel(timeoutInSeconds, label)).Click(); Thread.Sleep(500);
             int time = 0;
             while (GeneralAction.Instance.IsElementPresent(General.overlayDropdown) == false && time < timeoutInSeconds)
             {
-                this.Map.inputFieldLabel(timeoutInSeconds, label).Click(); Thread.Sleep(1000);
+                Map.HighlightElement(Map.inputFieldLabel(timeoutInSeconds, label)).Click(); Thread.Sleep(1000);
                 if (GeneralAction.Instance.IsElementPresent(General.overlayDropdown) == true) { break; }
                 if (time == timeoutInSeconds) { Console.WriteLine("Timeout - Click dropdown failed!"); }
                 time++;
@@ -343,33 +414,33 @@ namespace WorkbenchApp.UITest.Pages
         }
         public PipelineAction ClearInputFieldLabel(int timeoutInSeconds, string label)
         {
-            this.Map.inputFieldLabel(timeoutInSeconds, label).SendKeys(OpenQA.Selenium.Keys.Control + "a");
-            this.Map.inputFieldLabel(timeoutInSeconds, label).SendKeys(OpenQA.Selenium.Keys.Backspace); Thread.Sleep(250);
+            Map.HighlightElement(Map.inputFieldLabel(timeoutInSeconds, label)).SendKeys(OpenQA.Selenium.Keys.Control + "a");
+            Map.HighlightElement(Map.inputFieldLabel(timeoutInSeconds, label)).SendKeys(OpenQA.Selenium.Keys.Backspace); Thread.Sleep(250);
             return this;
         }
         public PipelineAction ClickCheckboxLabel(int timeoutInSeconds, string label) 
         {
-            this.Map.checkboxLabel(timeoutInSeconds, label).Click(); Thread.Sleep(250);
+            Map.HighlightElement(Map.checkboxLabel(timeoutInSeconds, label)).Click(); Thread.Sleep(250);
             return this;
         }
         public PipelineAction ClickButtonInputFieldLabel(int timeoutInSeconds, string label)
         {
-            this.Map.buttonInputFieldLabel(timeoutInSeconds, label).Click(); Thread.Sleep(250);
+            Map.HighlightElement(Map.buttonInputFieldLabel(timeoutInSeconds, label)).Click(); Thread.Sleep(250);
             return this;
         }
         public PipelineAction ClickDatepickerMonthYearTopButton(int timeoutInSeconds, string label, string monthOrYear)
         {
-            this.Map.btnDatepickerMonthYearTop(timeoutInSeconds, label, monthOrYear).Click(); Thread.Sleep(500);
+            Map.HighlightElement(Map.btnDatepickerMonthYearTop(timeoutInSeconds, label, monthOrYear)).Click(); Thread.Sleep(500);
             return this;
         }
         public PipelineAction ClickToPickerMonthYearInDatepicker(int timeoutInSeconds, string label, string monthOrYear)
         {
-            this.Map.pickerMonthYearInDatepicker(timeoutInSeconds, label, monthOrYear).Click(); Thread.Sleep(500);
+            Map.HighlightElement(Map.pickerMonthYearInDatepicker(timeoutInSeconds, label, monthOrYear)).Click(); Thread.Sleep(500);
             return this;
         }
         public PipelineAction ClickToPickerDayInDatepicker(int timeoutInSeconds, string label, string day)
         {
-            this.Map.pickerDayInDatepicker(timeoutInSeconds, label, day).Click(); Thread.Sleep(500);
+            Map.HighlightElement(Map.pickerDayInDatepicker(timeoutInSeconds, label, day)).Click(); Thread.Sleep(500);
             return this;
         }
         #endregion
@@ -377,7 +448,7 @@ namespace WorkbenchApp.UITest.Pages
         #region Built-in Actions
         public PipelineAction ClickAndSelectItemInDropdown(int timeoutInSeconds, string label, string item)
         {
-            ScrollIntoView(this.Map.dropdownLabel(timeoutInSeconds, label));
+            ScrollIntoView(Map.dropdownLabel(timeoutInSeconds, label));
             ClickLabelDropdown(timeoutInSeconds, label);
             WaitForElementVisible(10, General.overlayDropdown); Thread.Sleep(200);
             WaitForElementVisible(10, PipelinePage.itemInDropdown(item));
@@ -387,7 +458,7 @@ namespace WorkbenchApp.UITest.Pages
         }
         public PipelineAction ClickAndSelectItemInDropdownLowestAssetClass(int timeoutInSeconds, string label, string item)
         {
-            ScrollIntoView(this.Map.dropdownLabelInputField(timeoutInSeconds, label));
+            ScrollIntoView(Map.dropdownLabelInputField(timeoutInSeconds, label));
             ClickLowestAssetClassDropdownIcon(timeoutInSeconds);
             WaitForElementVisible(10, General.overlayDropdown); Thread.Sleep(200);
             WaitForElementVisible(10, PipelinePage.itemInDropdown(item));
@@ -400,7 +471,7 @@ namespace WorkbenchApp.UITest.Pages
             ClickPipelineStatusDropdownButton(timeoutInSeconds);
             WaitForElementVisible(10, General.overlayDropdown);
             WaitForElementVisible(10, PipelinePage.itemInDropdown(item));
-            this.Map.dropdownItem(timeoutInSeconds, item).Click();
+            Map.dropdownItem(timeoutInSeconds, item).Click();
             WaitForElementInvisible(10, General.overlayDropdown);
             return this;
         }

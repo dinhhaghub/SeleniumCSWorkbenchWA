@@ -37,6 +37,7 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             //string message = "This fund does not have Return data. Select another data source or upload the fund data.";
             DateTime timestampOrg = DateTime.UtcNow.AddDays(-1);
             string timestamp = timestampOrg.ToString("yyyy-MM-dd 00:00:00.000"); //DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            string videoFileName = "UploadFileTestTC001";
             #endregion
 
             #region Workflow scenario
@@ -44,6 +45,9 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             test = rep.CreateTest("WorkbenchApp - Upload File Test - TC001");
             try
             {
+                // Start recording video
+                Driver.StartVideoRecord(videoFileName);
+
                 // Log into the application
                 LoginAction.Instance.LoginSiteNoGodaddy(60, urlInstance);
 
@@ -558,9 +562,18 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 ExtReportResult(verifyPoint, summaryTC);
                 #endregion
                 #endregion
+
+                // Stop recording video
+                Driver.StopVideoRecord();
+
+                // Delete video file
+                Driver.DeleteFilesContainsName(Path.GetFullPath(@"../../../../../TestResults/"), videoFileName);
             }
             catch (Exception exception)
             {
+                // Stop recording video
+                Driver.StopVideoRecord();
+
                 // Print exception
                 System.Console.WriteLine(exception);
 
@@ -580,6 +593,7 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             const string currency = "USD";
             DateTime timestampOrg = DateTime.UtcNow.AddDays(-1);
             string timestamp = timestampOrg.ToString("yyyy-MM-dd 00:00:00.000"); //DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            string videoFileName = "UploadFileTestTC002";
             #endregion
 
             #region Workflow scenario
@@ -587,6 +601,9 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             test = rep.CreateTest("WorkbenchApp - Upload File Test - TC002");
             try
             {
+                // Start recording video
+                Driver.StartVideoRecord(videoFileName);
+
                 // Log into the application
                 LoginAction.Instance.LoginSiteNoGodaddy(60, urlInstance);
 
@@ -1179,9 +1196,18 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 ExtReportResult(verifyPoint, summaryTC);
                 #endregion
                 #endregion
+
+                // Stop recording video
+                Driver.StopVideoRecord();
+
+                // Delete video file
+                Driver.DeleteFilesContainsName(Path.GetFullPath(@"../../../../../TestResults/"), videoFileName);
             }
             catch (Exception exception)
             {
+                // Stop recording video
+                Driver.StopVideoRecord();
+
                 // Print exception
                 System.Console.WriteLine(exception);
 

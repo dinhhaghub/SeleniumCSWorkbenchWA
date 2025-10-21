@@ -26,6 +26,7 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
         {
             #region Variables declare
             string urlInstance = LoginPage.url;
+            string videoFileName = "TotalEndowmentTestTC001";
             #endregion
 
             #region Workflow scenario
@@ -33,6 +34,9 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             test = rep.CreateTest("WorkbenchApp - Total Endowment Test - TC001");
             try
             {
+                // Start recording video
+                Driver.StartVideoRecord(videoFileName);
+
                 // Log into the application
                 LoginAction.Instance.LoginSiteNoGodaddy(60, urlInstance);
 
@@ -165,9 +169,18 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 // Switch to the main tab
                 Driver.Browser.SwitchTo().Window(Driver.Browser.WindowHandles.First());*/
                 #endregion
+
+                // Stop recording video
+                Driver.StopVideoRecord();
+
+                // Delete video file
+                Driver.DeleteFilesContainsName(Path.GetFullPath(@"../../../../../TestResults/"), videoFileName);
             }
             catch (Exception exception)
             {
+                // Stop recording video
+                Driver.StopVideoRecord();
+
                 // Print exception
                 System.Console.WriteLine(exception);
 
@@ -183,6 +196,7 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
         {
             #region Variables declare
             string urlInstance = LoginPage.url;
+            string videoFileName = "TotalEndowmentTestTC002";
             #endregion
 
             #region Workflow scenario
@@ -190,6 +204,9 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             test = rep.CreateTest("WorkbenchApp - Total Endowment Test - TC002");
             try
             {
+                // Start recording video
+                Driver.StartVideoRecord(videoFileName);
+
                 // Log into the application
                 LoginAction.Instance.LoginSiteNoGodaddy(60, urlInstance);
 
@@ -217,36 +234,43 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 verifyPoint = GeneralAction.Instance.RowValuesInAssetTableGetText(10, 1, 1).Contains(title);
                 verifyPoints.Add(summaryTC = "Verify the 1st row value in Asset column is shown (A->Z): '" + title + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("TotalEndowment_Asset_1stAtoZ" + title + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
 
                 title = "Absolute Return";
                 verifyPoint = title == GeneralAction.Instance.RowValuesInAssetTableGetText(10, 2, 1);
                 verifyPoints.Add(summaryTC = "Verify the 2nd row value in Asset column is shown (A->Z): '" + title + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("TotalEndowment_Asset_2ndAtoZ" + title + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
 
                 title = "Fixed Income";
                 verifyPoint = title == GeneralAction.Instance.RowValuesInAssetTableGetText(10, 3, 1);
                 verifyPoints.Add(summaryTC = "Verify the 3rd row value in Asset column is shown (A->Z): '" + title + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("TotalEndowment_Asset_3rdAtoZ" + title + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
 
                 title = "Private Equity";
                 verifyPoint = title == GeneralAction.Instance.RowValuesInAssetTableGetText(10, 4, 1);
                 verifyPoints.Add(summaryTC = "Verify the 4th row value in Asset column is shown (A->Z): '" + title + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("TotalEndowment_Asset_4thAtoZ" + title + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
 
                 title = "Public Equities";
                 verifyPoint = title == GeneralAction.Instance.RowValuesInAssetTableGetText(10, 5, 1);
                 verifyPoints.Add(summaryTC = "Verify the 5th row value in Asset column is shown (A->Z): '" + title + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("TotalEndowment_Asset_5thAtoZ" + title + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
 
                 title = "Real Assets";
                 verifyPoint = title == GeneralAction.Instance.RowValuesInAssetTableGetText(10, 6, 1);
                 verifyPoints.Add(summaryTC = "Verify the 6th row value in Asset column is shown (A->Z): '" + title + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("TotalEndowment_Asset_6thAtoZ" + title + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
 
                 title = "Total Cash";
                 verifyPoint = title == GeneralAction.Instance.RowValuesInAssetTableGetText(10, 7, 1);
                 verifyPoints.Add(summaryTC = "Verify the 7th row value in Asset column is shown (A->Z): '" + title + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("TotalEndowment_Asset_7thAtoZ" + title + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
                 #endregion
 
                 #region Sort Z to A at column 'Asset'
@@ -266,40 +290,56 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 verifyPoint = GeneralAction.Instance.RowValuesInAssetTableGetText(10, 1, 1).Contains(title);
                 verifyPoints.Add(summaryTC = "Verify the 1st row value in Asset column is shown (Z->A): '" + title + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("TotalEndowment_Asset_1stZtoA" + title + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
 
                 title = "Total Cash";
                 verifyPoint = title == GeneralAction.Instance.RowValuesInAssetTableGetText(10, 2, 1);
                 verifyPoints.Add(summaryTC = "Verify the 2nd row value in Asset column is shown (Z->A): '" + title + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("TotalEndowment_Asset_2ndZtoA" + title + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
 
                 title = "Real Assets";
                 verifyPoint = title == GeneralAction.Instance.RowValuesInAssetTableGetText(10, 3, 1);
                 verifyPoints.Add(summaryTC = "Verify the 3rd row value in Asset column is shown (Z->A): '" + title + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("TotalEndowment_Asset_3rdZtoA" + title + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
 
                 title = "Public Equities";
                 verifyPoint = title == GeneralAction.Instance.RowValuesInAssetTableGetText(10, 4, 1);
                 verifyPoints.Add(summaryTC = "Verify the 4th row value in Asset column is shown (Z->A): '" + title + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("TotalEndowment_Asset_4thZtoA" + title + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
 
                 title = "Private Equity";
                 verifyPoint = title == GeneralAction.Instance.RowValuesInAssetTableGetText(10, 5, 1);
                 verifyPoints.Add(summaryTC = "Verify the 5th row value in Asset column is shown (Z->A): '" + title + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("TotalEndowment_Asset_5thZtoA" + title + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
 
                 title = "Fixed Income";
                 verifyPoint = title == GeneralAction.Instance.RowValuesInAssetTableGetText(10, 6, 1);
                 verifyPoints.Add(summaryTC = "Verify the 6th row value in Asset column is shown (Z->A): '" + title + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("TotalEndowment_Asset_6thZtoA" + title + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
 
                 title = "Absolute Return";
                 verifyPoint = title == GeneralAction.Instance.RowValuesInAssetTableGetText(10, 7, 1);
                 verifyPoints.Add(summaryTC = "Verify the 7th row value in Asset column is shown (Z->A): '" + title + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
+                if (verifyPoint == false) { Driver.TakeScreenShot("TotalEndowment_Asset_7thZtoA" + title + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt")); }
                 #endregion
+
+                // Stop recording video
+                Driver.StopVideoRecord();
+
+                // Delete video file
+                Driver.DeleteFilesContainsName(Path.GetFullPath(@"../../../../../TestResults/"), videoFileName);
             }
             catch (Exception exception)
             {
+                // Stop recording video
+                Driver.StopVideoRecord();
+
                 // Print exception
                 System.Console.WriteLine(exception);
 

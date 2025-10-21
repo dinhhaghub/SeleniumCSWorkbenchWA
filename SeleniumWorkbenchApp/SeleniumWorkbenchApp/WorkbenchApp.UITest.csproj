@@ -2,21 +2,23 @@
 
   <PropertyGroup>
     <!--<TargetFramework>net6.0</TargetFramework>-->
-	<TargetFramework>net6.0-windows</TargetFramework>
+	<TargetFramework>net8.0-windows</TargetFramework>
 	<UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
+
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ExtentReports" Version="5.0.4" />
+    <PackageReference Include="ExtentReports" Version="5.0.5-beta1" />
     <PackageReference Include="iTextSharp" Version="5.5.13.4" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
-    <PackageReference Include="NUnit" Version="4.3.2" />
-    <PackageReference Include="NUnit3TestAdapter" Version="5.0.0" />
-    <PackageReference Include="NUnit.Analyzers" Version="4.7.0">
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+    <PackageReference Include="NUnit" Version="4.4.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="5.2.0" />
+    <PackageReference Include="NUnit.Analyzers" Version="4.10.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -24,16 +26,33 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="RestSharp.Serializers.Utf8Json" Version="106.15.0" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.32.0" />
+    <PackageReference Include="Reqnroll" Version="3.1.1" />
+    <PackageReference Include="Reqnroll.NUnit" Version="3.1.1" />
+    <PackageReference Include="Reqnroll.Tools.MsBuild.Generation" Version="3.1.1" />
+    <PackageReference Include="RestSharp.Serializers.Utf8Json" Version="106.15.1-alpha.0.1" />
+    <PackageReference Include="ScreenRecorderLib" Version="6.5.1" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.36.0" />
     <PackageReference Include="SeleniumExtras.WaitHelpers" Version="1.0.2" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.5" />
-    <PackageReference Include="System.Text.Json" Version="9.0.5" />
+    <PackageReference Include="System.Drawing.Common" Version="10.0.0-rc.1.25451.107" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
+    <PackageReference Include="System.Text.Json" Version="10.0.0-rc.1.25451.107" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Core\WebDrivers\" />
     <Folder Include="Reports\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- BDD Feature files -->
+	<None Update="BDD\Features\**\*.feature">
+	<Generator>ReqnrollSingleFileGenerator</Generator>
+    <LastGenOutput>$(Filename).feature.cs</LastGenOutput>
+	</None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WorkbenchApp.FunctionalTest\WorkbenchApp.FunctionalTest.csproj" />
   </ItemGroup>
 
   <ItemGroup>

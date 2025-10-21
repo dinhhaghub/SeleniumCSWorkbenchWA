@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WorkbenchApp.UITest.Core.BaseTestCase;
+using WorkbenchApp.UITest.Core.Selenium;
 using WorkbenchApp.UITest.Generals;
 using WorkbenchApp.UITest.Pages;
 
@@ -25,6 +26,7 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
         {
             #region Variables declare
             string urlInstance = LoginPage.url;
+            string videoFileName = "ScenarioTestTC001";
             #endregion
 
             #region Workflow scenario
@@ -32,6 +34,9 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             test = rep.CreateTest("WorkbenchApp - Scenario Test - TC001");
             try
             {
+                // Start recording video
+                Driver.StartVideoRecord(videoFileName);
+
                 // Log into the application
                 LoginAction.Instance.LoginSiteNoGodaddy(60, urlInstance);
 
@@ -55,14 +60,14 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
 
                 /// Verify Column names
                 string data = "";
-                verifyPoint = ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.testScenarioInput, "1", "1").Contains(data = "Asset")
-                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.testScenarioInput, "1", "2").Contains(data = "Beta")
-                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.testScenarioInput, "1", "3").Contains(data = "Expected Beta")
-                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.testScenarioInput, "1", "4").Contains(data = "Current NAV/MV")
-                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.testScenarioInput, "1", "5").Contains(data = "Scenario Flows")
-                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.testScenarioInput, "1", "6").Contains(data = "Scenario NAV")
-                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.testScenarioInput, "1", "7").Contains(data = "% of Endowment\r\n( Current NAV)") // KS-679
-                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.testScenarioInput, "1", "8").Contains(data = "% of Endowment\r\n(Scenario NAV)"); // KS-679
+                verifyPoint = ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.testScenarioInput, "1", "1", data = "Asset")
+                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.testScenarioInput, "1", "2", data = "Beta")
+                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.testScenarioInput, "1", "3", data = "Expected Beta")
+                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.testScenarioInput, "1", "4", data = "Current NAV/MV")
+                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.testScenarioInput, "1", "5", data = "Scenario Flows")
+                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.testScenarioInput, "1", "6", data = "Scenario NAV")
+                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.testScenarioInput, "1", "7", data = "% of Endowment\r\n( Current NAV)") // KS-679
+                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.testScenarioInput, "1", "8", data = "% of Endowment\r\n(Scenario NAV)"); // KS-679
                 verifyPoints.Add(summaryTC = "Verify Column names in '" + ScenarioTestPage.testScenarioInput + "' Section is shown", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
@@ -73,18 +78,18 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 /// Verify Column names
                 /// Parent-column
                 verifyPoint = //ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.priorDayComparison, "1", "1").Contains(data = "Today")
-                     ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.priorDayComparison, "1", "2").Contains(data = "Actual")
-                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.priorDayComparison, "1", "3").Contains(data = "");
+                     ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.priorDayComparison, "1", "2", data = "Actual")
+                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.priorDayComparison, "1", "3", data = "");
                 verifyPoints.Add(summaryTC = "Verify Parent-column names in '" + ScenarioTestPage.priorDayComparison + "' Section is shown", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 /// Sub-column
-                verifyPoint = ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.priorDayComparison, "2", "1").Contains(data = "Asset")
-                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.priorDayComparison, "2", "2").Contains(data = "Current NAV/ MV")
-                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.priorDayComparison, "2", "3").Contains(data = "Dollar Change in NAV")
-                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.priorDayComparison, "2", "4").Contains(data = "NAV%")
-                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.priorDayComparison, "2", "5").Contains(data = "Beta")
-                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.priorDayComparison, "2", "6").Contains(data = "Change In NAV")
-                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.priorDayComparison, "2", "7").Contains(data = "Change In Beta");
+                verifyPoint = ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.priorDayComparison, "2", "1", data = "Asset")
+                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.priorDayComparison, "2", "2", data = "Current NAV/ MV")
+                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.priorDayComparison, "2", "3", data = "Dollar Change in NAV")
+                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.priorDayComparison, "2", "4", data = "NAV%")
+                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.priorDayComparison, "2", "5", data = "Beta")
+                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.priorDayComparison, "2", "6", data = "Change In NAV")
+                    && ScenarioTestAction.Instance.ColumnNamesInSectionGetText(10, ScenarioTestPage.priorDayComparison, "2", "7", data = "Change In Beta");
                 verifyPoints.Add(summaryTC = "Verify Sub-column names in '" + ScenarioTestPage.priorDayComparison + "' Section is shown", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 #endregion
@@ -104,7 +109,7 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
 
                 // Verify data at the column of section is sorted Z to A
                 string title = "Real Assets";
-                verifyPoint = title == ScenarioTestAction.Instance.DataInSectionGetText(10, ScenarioTestPage.testScenarioInput, "1", "1");
+                verifyPoint = ScenarioTestAction.Instance.DataInSectionGetText(10, ScenarioTestPage.testScenarioInput, "1", "1", title);
                 verifyPoints.Add(summaryTC = "Verify the 1st row value in 'Asset' column of '" + ScenarioTestPage.testScenarioInput + "' is shown (Z->A): '" + title + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 #endregion
@@ -153,7 +158,7 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 GeneralAction.Instance.ClickButtonLabel(10, "Save");
 
                 // Verify a popup warning is shown after adding a duplicated Fund name
-                verifyPoint = (data = "Duplicate Fund Names are not allowed") == ScenarioTestAction.Instance.AddEditFundsMsgContentPopupGetText(10);
+                verifyPoint = ScenarioTestAction.Instance.AddEditFundsMsgContentPopupGetText(10, data = "Duplicate Fund Names are not allowed");
                 verifyPoints.Add(summaryTC = "Verify a popup warning is shown after adding a duplicated Fund name: '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
@@ -171,35 +176,44 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 ScenarioTestAction.Instance.ClickAssetNameInSectionName(10, ScenarioTestPage.testScenarioInput, "Global Equity");
 
                 // Verify the new fund has just been added
-                verifyPoint = (data = "1.050") == ScenarioTestAction.Instance.AssetNameInSectionNameColDataGetText(10, ScenarioTestPage.testScenarioInput, fundName, "2");
+                verifyPoint = ScenarioTestAction.Instance.AssetNameInSectionNameColDataGetText(10, ScenarioTestPage.testScenarioInput, fundName, "2", data = "1.050");
                 verifyPoints.Add(summaryTC = "Verify the new fund (" + fundName + ") has just been added: 'Beta'='" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
-                verifyPoint = (data = "1.050") == ScenarioTestAction.Instance.AssetNameInSectionNameColDataGetText(10, ScenarioTestPage.testScenarioInput, fundName, "3");
+                verifyPoint = ScenarioTestAction.Instance.AssetNameInSectionNameColDataGetText(10, ScenarioTestPage.testScenarioInput, fundName, "3", data = "1.050");
                 verifyPoints.Add(summaryTC = "Verify the new fund (" + fundName + ") has just been added: 'Expected Beta'='" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
-                verifyPoint = (data = "2.05") == ScenarioTestAction.Instance.AssetNameInSectionNameColDataGetText(10, ScenarioTestPage.testScenarioInput, fundName, "5");
+                verifyPoint = ScenarioTestAction.Instance.AssetNameInSectionNameColDataGetText(10, ScenarioTestPage.testScenarioInput, fundName, "5", data = "2.05");
                 verifyPoints.Add(summaryTC = "Verify the new fund (" + fundName + ") has just been added: 'Scenario Flows in millions'='" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
-                verifyPoint = (data = "2.05") == ScenarioTestAction.Instance.AssetNameInSectionNameColDataGetText(10, ScenarioTestPage.testScenarioInput, fundName, "6");
+                verifyPoint = ScenarioTestAction.Instance.AssetNameInSectionNameColDataGetText(10, ScenarioTestPage.testScenarioInput, fundName, "6", data = "2.05");
                 verifyPoints.Add(summaryTC = "Verify the new fund (" + fundName + ") has just been added: 'Scenario NAV'='" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
                 // Verify data is Recalulated for the ' Scenario Cash' row of 'Scenario Flows In millions' of 'Test Scenario Input' section
-                verifyPoint = ScenarioTestAction.Instance.AssetNameInSectionNameColDataGetText(10, ScenarioTestPage.testScenarioInput, "Scenario Cash", "5").Contains(data = "(2.05)");
+                verifyPoint = ScenarioTestAction.Instance.AssetNameInSectionNameColDataGetText(10, ScenarioTestPage.testScenarioInput, "Scenario Cash", "5", data = "(2.05)");
                 verifyPoints.Add(summaryTC = "Verify data is Recalulated for the 'Scenario Cash' row of 'Scenario Flows In millions' of '" + ScenarioTestPage.testScenarioInput + "' section: " + data + "", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
                 // Verify data is Recalulated for the ' Scenario Cash' row of 'Scenario NAV' of 'Test Scenario Input' section
-                verifyPoint = ScenarioTestAction.Instance.AssetNameInSectionNameColDataGetText(10, ScenarioTestPage.testScenarioInput, "Scenario Cash", "6").Contains(data = "(2.05)");
+                verifyPoint = ScenarioTestAction.Instance.AssetNameInSectionNameColDataGetText(10, ScenarioTestPage.testScenarioInput, "Scenario Cash", "6", data = "(2.05)");
                 verifyPoints.Add(summaryTC = "Verify data is Recalulated for the 'Scenario Cash' row of 'Scenario NAV' of '" + ScenarioTestPage.testScenarioInput + "' section: " + data + "", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 #endregion
+
+                // Stop recording video
+                Driver.StopVideoRecord();
+
+                // Delete video file
+                Driver.DeleteFilesContainsName(Path.GetFullPath(@"../../../../../TestResults/"), videoFileName);
             }
             catch (Exception exception)
             {
+                // Stop recording video
+                Driver.StopVideoRecord();
+
                 // Print exception
                 System.Console.WriteLine(exception);
 

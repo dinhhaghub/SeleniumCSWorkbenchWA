@@ -1,0 +1,14 @@
+{
+  "generator": {
+    "allowDebugGeneratedFiles": true,
+    "allowRowTests": true
+  },
+  "runtime": {
+    "stopAtFirstError": false,
+    "missingOrPendingStepsOutcome": "Inconclusive"
+  },
+  "trace": {
+    "traceSuccessfulSteps": true,
+    "traceTimings": true
+  }
+}

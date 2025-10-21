@@ -9,26 +9,37 @@ using Microsoft.Identity.Client;
 
 namespace WorkbenchApp.FunctionalTest
 {
-    internal class Config
+    public class Config
     {
 
         // Initiate variables (to get msal.idtoken)
-        internal static readonly string? userName = ConfigurationManager.AppSettings.Get("userName");
-        internal static readonly string? password = ConfigurationManager.AppSettings.Get("password");
-        internal static readonly string? clientId = ConfigurationManager.AppSettings.Get("clientId");
-        internal static readonly string? tenantId = ConfigurationManager.AppSettings.Get("tenantId");
-        internal static string authority = $"https://login.microsoftonline.com/{tenantId}";
-        internal static string[] scopes = new[] { "Files.Read.All", "openid", "profile", "User.Read", "email" };
-        internal static readonly string? redirectUri = ConfigurationManager.AppSettings.Get("redirectUri");
-        internal static IPublicClientApplication? app;
+        public static readonly string? userName = ConfigurationManager.AppSettings.Get("userName");
+        public static readonly string? password = ConfigurationManager.AppSettings.Get("password");
+        public static readonly string? clientId = ConfigurationManager.AppSettings.Get("clientId");
+        public static readonly string? tenantId = ConfigurationManager.AppSettings.Get("tenantId");
+        public static string authority = $"https://login.microsoftonline.com/{tenantId}";
+        public static string[] scopes = new[] { "Files.Read.All", "openid", "profile", "User.Read", "email" };
+        public static readonly string? redirectUri = ConfigurationManager.AppSettings.Get("redirectUri");
+        public static IPublicClientApplication? app;
 
         // Login to get msal.idtoken - MSAL (Microsoft Authentication Library)
-        internal static async Task<AuthenticationResult> LoginAsync()
+        public static async Task<AuthenticationResult> LoginAsync()
         {
             app = PublicClientApplicationBuilder.Create(clientId)
                  .WithAuthority(authority)
                  .WithRedirectUri(redirectUri) // Redirect URI for desktop/mobile apps
                  .Build();
+            AuthenticationResult? result = await app.AcquireTokenByUsernamePassword(scopes, userName, password).ExecuteAsync();
+            return result;
+        }
+        public static async Task<AuthenticationResult> LoginAsync(string userName, string password, string clientId, string tenantId, string redirectUri)
+        {
+            IPublicClientApplication app;
+            app = PublicClientApplicationBuilder.Create(clientId)
+                 .WithAuthority($"https://login.microsoftonline.com/{tenantId}")
+                 .WithRedirectUri(redirectUri) // Redirect URI for desktop/mobile apps
+                 .Build();
+            string[] scopes = new[] { "Files.Read.All", "openid", "profile", "User.Read", "email" };
             AuthenticationResult? result = await app.AcquireTokenByUsernamePassword(scopes, userName, password).ExecuteAsync();
             return result;
         }
@@ -79,6 +90,11 @@ namespace WorkbenchApp.FunctionalTest
                 }
             }
             return xdoc;
+        }
+
+        public static async Task LoginAsync(object email, object password, object clientId, object tenantId, object redirectUri)
+        {
+            throw new NotImplementedException();
         }
     }
 }

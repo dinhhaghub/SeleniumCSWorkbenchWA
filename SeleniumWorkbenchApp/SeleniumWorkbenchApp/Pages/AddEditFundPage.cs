@@ -75,6 +75,26 @@ namespace WorkbenchApp.UITest.Pages
         internal static By toastMessage(string text) => By.XPath(@"//p-toastitem[contains(@class,'toastAnimation')]//div[.='" + text + "']");
 
         // Initiate the elements
+        public IWebElement HighlightElement(IWebElement element, string? color = null, string? setOrRemoveAttr = null)
+        {
+            color ??= "blue";
+            setOrRemoveAttr ??= "remove"; // chỉ định hành động "remove" hoặc "keep"
+
+            IJavaScriptExecutor js = (IJavaScriptExecutor)Driver.Browser;
+
+            // Highlight
+            js.ExecuteScript("arguments[0].setAttribute('style', arguments[1]);", element, "border: 3px solid " + color + ";");
+            Thread.Sleep(150);
+
+            // Unhighlight nếu setOrRemoveAttr = "remove"
+            if (setOrRemoveAttr.Equals("remove", StringComparison.OrdinalIgnoreCase))
+            {
+                js.ExecuteScript("arguments[0].removeAttribute('style');", element);
+            }
+
+            return element;
+        }
+
         public IWebElement dropdownFundType(int timeoutInSeconds)
         {
             wait = new WebDriverWait(Driver.Browser, TimeSpan.FromSeconds(timeoutInSeconds));
@@ -223,9 +243,22 @@ namespace WorkbenchApp.UITest.Pages
         {
             return this.Map.errorMessageFundNameExists(timeoutInSeconds).Text;
         }
-        public string toastMessageAlertGetText(int timeout, string text)
+        //public string toastMessageAlertGetText(int timeout, string text)
+        //{
+        //    return this.Map.toastMessageAlert(timeout, text).Text;
+        //}
+        public bool toastMessageAlertGetText(int timeout, string text, string textParam)
         {
-            return this.Map.toastMessageAlert(timeout, text).Text;
+            var iweb = Map.toastMessageAlert(timeout, text);
+            bool element = Map.HighlightElement(iweb, "green").Text.Contains(textParam);
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_toastMessageAlertGetText_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
 
         // Actions
@@ -238,51 +271,51 @@ namespace WorkbenchApp.UITest.Pages
         }
         public AddEditFundAction ClickFundTypeDropdown(int timeoutInSeconds) 
         {
-            this.Map.dropdownFundType(timeoutInSeconds).Click();
+            Map.HighlightElement(Map.dropdownFundType(timeoutInSeconds)).Click();
             return this;
         }
         public AddEditFundAction ClickLowestAssetClassDropdownIcon(int timeoutInSeconds)
         {
-            this.Map.dropdownIconLowestAssetClass(timeoutInSeconds).Click();
+            Map.HighlightElement(Map.dropdownIconLowestAssetClass(timeoutInSeconds)).Click();
             return this;
         }
         public AddEditFundAction ClickLabelDropdown(int timeoutInSeconds, string label)
         {
-            this.Map.dropdownLabel(timeoutInSeconds, label).Click();
+            Map.HighlightElement(Map.dropdownLabel(timeoutInSeconds, label)).Click();
             return this;
         }
         public AddEditFundAction ClickToSelectItemInDropdown(int timeoutInSeconds, string item)
         {
-            ScrollIntoView(this.Map.dropdownItem(timeoutInSeconds, item));
+            ScrollIntoView(Map.dropdownItem(timeoutInSeconds, item));
             //IJavaScriptExecutor je = (IJavaScriptExecutor)Driver.Browser;
             //je.ExecuteScript("arguments[0].click();", this.Map.dropdownItem(timeoutInSeconds, item));
             Actions actions = new Actions(Driver.Browser);
-            actions.Click(this.Map.dropdownItem(timeoutInSeconds, item)).Build().Perform();
+            actions.Click(Map.HighlightElement(Map.dropdownItem(timeoutInSeconds, item))).Build().Perform();
             return this;
         }
         public AddEditFundAction ClickToSelectItemInDropdown(int timeoutInSeconds, string item, string posTagIndex)
         {
-            ScrollIntoView(this.Map.dropdownItem(timeoutInSeconds, item));
+            ScrollIntoView(Map.dropdownItem(timeoutInSeconds, item));
             IJavaScriptExecutor je = (IJavaScriptExecutor)Driver.Browser;
-            je.ExecuteScript("arguments[0].click();", this.Map.dropdownItem(timeoutInSeconds, item, posTagIndex));
+            je.ExecuteScript("arguments[0].click();", Map.dropdownItem(timeoutInSeconds, item, posTagIndex));
             return this;
         }
         public AddEditFundAction ClickLabelDropdownInputField(int timeoutInSeconds, string label)
         {
-            this.Map.dropdownLabelInputField(timeoutInSeconds, label).Click(); Thread.Sleep(500);
+            Map.HighlightElement(Map.dropdownLabelInputField(timeoutInSeconds, label)).Click(); Thread.Sleep(500);
             int time = 0;
             while (GeneralAction.Instance.IsElementPresent(General.overlayDropdown) == false && time < timeoutInSeconds)
             {
                 if (GeneralAction.Instance.IsElementPresent(General.overlayDropdown) == true) { break; }
                 if (time == timeoutInSeconds) { Console.WriteLine("Timeout - Click dropdown failed!"); }
-                this.Map.dropdownLabelInputField(timeoutInSeconds, label).Click(); Thread.Sleep(1000);
+                Map.HighlightElement(Map.dropdownLabelInputField(timeoutInSeconds, label)).Click(); Thread.Sleep(1000);
                 time++;
             }
             return this;
         }
         public AddEditFundAction ClickFundDropdownInputField(int timeoutInSeconds, string label)
         {
-            this.Map.dropdownFundInputField(timeoutInSeconds, label).Click(); Thread.Sleep(500);
+            Map.HighlightElement(Map.dropdownFundInputField(timeoutInSeconds, label)).Click(); Thread.Sleep(500);
             //Actions actions = new Actions(Driver.Browser);
             //actions.DoubleClick(this.Map.dropdownFundInputField(timeoutInSeconds, label)).Build().Perform(); Thread.Sleep(500);
 
@@ -291,7 +324,7 @@ namespace WorkbenchApp.UITest.Pages
             {
                 if (GeneralAction.Instance.IsElementPresent(General.overlayDropdown) == true) { break; }
                 if (time == timeoutInSeconds) { Console.WriteLine("Timeout - Click dropdown failed!"); }
-                this.Map.dropdownFundInputField(timeoutInSeconds, label).Click(); Thread.Sleep(1000);
+                Map.HighlightElement(Map.dropdownFundInputField(timeoutInSeconds, label)).Click(); Thread.Sleep(1000);
                 //actions.DoubleClick(this.Map.dropdownFundInputField(timeoutInSeconds, label)).Build().Perform(); Thread.Sleep(1000);
                 time++;
             }
@@ -299,70 +332,70 @@ namespace WorkbenchApp.UITest.Pages
         }
         public AddEditFundAction ClickButtonLinkInDropdown(int timeoutInSeconds, string linkName)
         {
-            ScrollIntoView(this.Map.btnLinkInDropdown(timeoutInSeconds, linkName));
-            this.Map.btnLinkInDropdown(timeoutInSeconds, linkName).Click();
+            ScrollIntoView(Map.btnLinkInDropdown(timeoutInSeconds, linkName));
+            Map.HighlightElement(Map.btnLinkInDropdown(timeoutInSeconds, linkName)).Click();
             return this;
         }
 
         /// Fund & Manager Information Section (Items action)
         public AddEditFundAction ClickFundManagerToSearchFund()
         {
-            this.Map.inputTxtFundManager.Click();
+            Map.HighlightElement(Map.inputTxtFundManager).Click();
             return this;
         }
         public AddEditFundAction InputFundManagerToSearchFund(string fundManager)
         {
-            this.Map.inputTxtFundManager.Clear(); System.Threading.Thread.Sleep(500);
-            this.Map.inputTxtFundManager.SendKeys(fundManager);
+            Map.HighlightElement(Map.inputTxtFundManager).Clear(); System.Threading.Thread.Sleep(500);
+            Map.HighlightElement(Map.inputTxtFundManager).SendKeys(fundManager);
             return this;
         }
         public AddEditFundAction ClickManagerNameReturnOfResults(int timeout, string fundName)
         {
             Actions actions = new Actions(Driver.Browser);
-            actions.MoveToElement(this.Map.returnOfResultsManagerName(timeout, fundName));
+            actions.MoveToElement(Map.returnOfResultsManagerName(timeout, fundName));
             actions.Perform();
-            this.Map.returnOfResultsManagerName(timeout, fundName).Click();
+            Map.HighlightElement(Map.returnOfResultsManagerName(timeout, fundName)).Click();
             return this;
         }
         public AddEditFundAction ClickFundNameReturnOfResults(int timeout, string fundName)
         {
             Actions actions = new Actions(Driver.Browser);
-            actions.MoveToElement(this.Map.returnOfResultsFundName(timeout, fundName));
+            actions.MoveToElement(Map.returnOfResultsFundName(timeout, fundName));
             actions.Perform();
-            this.Map.returnOfResultsFundName(timeout, fundName).Click();
+            Map.HighlightElement(Map.returnOfResultsFundName(timeout, fundName)).Click();
             return this;
         }
         public AddEditFundAction ClickFundManagerAddNewLink(int timeoutInSeconds)
         {
-            this.Map.addNewLinkFundManager(timeoutInSeconds).Click();
+            Map.HighlightElement(Map.addNewLinkFundManager(timeoutInSeconds)).Click();
             return this;
         }
         public AddEditFundAction InputManagerName(string managerName)
         {
-            this.Map.inputTxtManagerName.Clear();
-            this.Map.inputTxtManagerName.SendKeys(managerName);
+            Map.HighlightElement(Map.inputTxtManagerName).Clear();
+            Map.HighlightElement(Map.inputTxtManagerName).SendKeys(managerName);
             return this;
         }
         public AddEditFundAction InputFundName(string fundName)
         {
-            this.Map.inputTxtFundName.Clear();
-            this.Map.inputTxtFundName.SendKeys(fundName);
+            Map.HighlightElement(Map.inputTxtFundName).Clear();
+            Map.HighlightElement(Map.inputTxtFundName).SendKeys(fundName);
             return this;
         }
         public AddEditFundAction InputInceptionDate(int timeoutInSeconds, string date)
         {
-            this.Map.inputTxtInceptionDate.SendKeys(OpenQA.Selenium.Keys.Control + "a");
-            this.Map.inputTxtInceptionDate.SendKeys(date);
+            Map.HighlightElement(Map.inputTxtInceptionDate).SendKeys(OpenQA.Selenium.Keys.Control + "a");
+            Map.HighlightElement(Map.inputTxtInceptionDate).SendKeys(date);
 
             // Try with javascript if Element Click Intercepted Exception
             IJavaScriptExecutor je = (IJavaScriptExecutor)Driver.Browser;
-            je.ExecuteScript("arguments[0].click();", this.Map.buttonInceptionDate(timeoutInSeconds));
+            je.ExecuteScript("arguments[0].click();", Map.buttonInceptionDate(timeoutInSeconds));
             WaitForElementInvisible(10, AddEditFundPage.overlayDropdown);
             return this;
         }
         public AddEditFundAction ClickButtonLabel(int timeoutInSeconds, string label)
         {
-            this.Map.buttonLabel(timeoutInSeconds, label).Click();
+            Map.HighlightElement(Map.buttonLabel(timeoutInSeconds, label)).Click();
             return this;
         }
         public AddEditFundAction ClickMenuButtonLabel(int timeoutInSeconds, string label)
@@ -382,20 +415,20 @@ namespace WorkbenchApp.UITest.Pages
         //}
         public AddEditFundAction ClearInputFieldLabel(int timeoutInSeconds, string label)
         {
-            this.Map.inputFieldLabel(timeoutInSeconds, label).SendKeys(OpenQA.Selenium.Keys.Control + "a");
-            this.Map.inputFieldLabel(timeoutInSeconds, label).SendKeys(OpenQA.Selenium.Keys.Backspace); Thread.Sleep(250);
+            Map.HighlightElement(Map.inputFieldLabel(timeoutInSeconds, label)).SendKeys(OpenQA.Selenium.Keys.Control + "a");
+            Map.HighlightElement(Map.inputFieldLabel(timeoutInSeconds, label)).SendKeys(OpenQA.Selenium.Keys.Backspace); Thread.Sleep(250);
             return this;
         }
         public AddEditFundAction InputFieldLabel(int timeoutInSeconds, string label, string txt)
         {
-            this.Map.inputFieldLabel(timeoutInSeconds, label).Clear();
-            this.Map.inputFieldLabel(timeoutInSeconds, label).SendKeys(txt); Thread.Sleep(250);
+            Map.HighlightElement(Map.inputFieldLabel(timeoutInSeconds, label)).Clear();
+            Map.HighlightElement(Map.inputFieldLabel(timeoutInSeconds, label)).SendKeys(txt); Thread.Sleep(250);
             return this;
         }
         public AddEditFundAction InputTxtFundLabel(int fundNumber, string label, string txt)
         {
-            this.Map.inputFundLabelTxt(fundNumber, label).Clear();
-            this.Map.inputFundLabelTxt(fundNumber, label).SendKeys(txt);
+            Map.HighlightElement(Map.inputFundLabelTxt(fundNumber, label)).Clear();
+            Map.HighlightElement(Map.inputFundLabelTxt(fundNumber, label)).SendKeys(txt);
             return this;
         }
         #endregion

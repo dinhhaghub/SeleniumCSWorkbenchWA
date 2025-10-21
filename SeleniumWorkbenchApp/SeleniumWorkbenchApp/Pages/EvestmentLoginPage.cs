@@ -24,6 +24,26 @@ namespace WorkbenchApp.UITest.Pages
         internal static By dynamoSoftwarelearnMoreBtn = By.Id("learnMoreButton");
 
         // Initiate the elements
+        public IWebElement HighlightElement(IWebElement element, string? color = null, string? setOrRemoveAttr = null)
+        {
+            color ??= "blue";
+            setOrRemoveAttr ??= "remove"; // chỉ định hành động "remove" hoặc "keep"
+
+            IJavaScriptExecutor js = (IJavaScriptExecutor)Driver.Browser;
+
+            // Highlight
+            js.ExecuteScript("arguments[0].setAttribute('style', arguments[1]);", element, "border: 3px solid " + color + ";");
+            Thread.Sleep(150);
+
+            // Unhighlight nếu setOrRemoveAttr = "remove"
+            if (setOrRemoveAttr.Equals("remove", StringComparison.OrdinalIgnoreCase))
+            {
+                js.ExecuteScript("arguments[0].removeAttribute('style');", element);
+            }
+
+            return element;
+        }
+
         public IWebElement txtUserNameEmail(int timeoutInSeconds)
         {
             wait = new WebDriverWait(Driver.Browser, TimeSpan.FromSeconds(timeoutInSeconds));
@@ -67,19 +87,55 @@ namespace WorkbenchApp.UITest.Pages
         // verify elements
         public bool IsUserNameEmailTextboxShown(int timeoutInSeconds)
         {
-            return this.Map.txtUserNameEmail(timeoutInSeconds).Displayed;
+            var iweb = this.Map.txtUserNameEmail(timeoutInSeconds);
+            bool element = Map.HighlightElement(iweb, "green").Displayed;
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute"); // keep highlight in red border if fail
+                Driver.TakeScreenShot("ss_IsUserNameEmailTextboxShown" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public bool IsLoginButtonShown(int timeoutInSeconds)
         {
-            return this.Map.btnLogIn(timeoutInSeconds).Displayed;
+            var iweb = Map.btnLogIn(timeoutInSeconds);
+            bool element = Map.HighlightElement(iweb, "green").Displayed;
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute"); // keep highlight in red border if fail
+                Driver.TakeScreenShot("ss_IsLoginButtonShown" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public bool IsRequestAnAccountButtonShown(int timeoutInSeconds)
         {
-            return this.Map.btnRequestAnAccount(timeoutInSeconds).Displayed;
+            var iweb = Map.btnRequestAnAccount(timeoutInSeconds);
+            bool element = Map.HighlightElement(iweb, "green").Displayed;
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute"); // keep highlight in red border if fail
+                Driver.TakeScreenShot("ss_IsRequestAnAccountButtonShown" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public bool IsDynamoSoftwarelearnMoreButtonShown(int timeoutInSeconds)
         {
-            return this.Map.btnDynamoSoftwarelearnMore(timeoutInSeconds).Displayed;
+            var iweb = this.Map.btnDynamoSoftwarelearnMore(timeoutInSeconds);
+            bool element = Map.HighlightElement(iweb, "green").Displayed;
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute"); // keep highlight in red border if fail
+                Driver.TakeScreenShot("ss_IsDynamoSoftwarelearnMoreButtonShown" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         #endregion
 

@@ -4,6 +4,7 @@ using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Support.UI;
+using ScreenRecorderLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,8 @@ namespace WorkbenchApp.UITest.Core.Selenium
     {
         private static IWebDriver? browser;
         private static WebDriverWait? browserWait;
+        private static Recorder? recorder;
+        private static string? videoPath;
 
         public static IWebDriver? Browser
         {
@@ -132,12 +135,70 @@ namespace WorkbenchApp.UITest.Core.Selenium
 
         internal static void TakeScreenShot(string screenShotName)
         {
-            //XDocument xdoc = XDocument.Load(@"Config\Config.xml");
-            //string screenshotPath = xdoc.XPathSelectElement("config/screenshot/screenshotPath").Value;
-            //string screenshotFormat = xdoc.XPathSelectElement("config/screenshot/screenshotFormat").Value;
+            XDocument xdoc = XDocument.Load(@"Config\Config.xml");
+            string folderName = xdoc.XPathSelectElement("config/screenshot/screenshotPath").Value;
+            string screenshotPath = Path.GetFullPath(@"../../../../../" + folderName + "/");
+            string screenshotFormat = xdoc.XPathSelectElement("config/screenshot/screenshotFormat").Value;
 
-            //Screenshot ss = ((ITakesScreenshot)Driver.browser).GetScreenshot();
-            //ss.SaveAsFile(screenshotPath + screenShotName + screenshotFormat, ScreenshotImageFormat.Jpeg);
+            Screenshot ss = ((ITakesScreenshot)Driver.browser).GetScreenshot();
+            ss.SaveAsFile(screenshotPath + screenShotName + screenshotFormat); //ScreenshotImageFormat.Jpeg
+        }
+
+        internal static void StartVideoRecord(string fileName = "TestRecording")
+        {
+            XDocument xdoc = XDocument.Load(@"Config\Config.xml");
+            string folderName = xdoc.XPathSelectElement("config/videorecord/videorecordPath").Value;
+            //string folder = Path.Combine(Directory.GetCurrentDirectory(), "TestVideos");
+            string folderPath = Path.GetFullPath(@"../../../../../" + folderName + "/");
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
+
+            videoPath = Path.Combine(folderPath, $"{fileName}_{DateTime.Now:yyyyMMdd_HHmmss}.mp4");
+
+            recorder = Recorder.CreateRecorder();
+            recorder.Record(videoPath);
+        }
+
+        internal static void StopVideoRecord()
+        {
+            if (recorder != null)
+            {
+                recorder.Stop();
+                Thread.Sleep(1000); // đợi file hoàn tất ghi
+                Console.WriteLine($"Video saved at: {videoPath}");
+            }
+        }
+
+        internal static void DeleteFilesContainsName(string folderPath, string keyword)
+        {
+            try
+            {
+                if (!Directory.Exists(folderPath))
+                {
+                    Console.WriteLine($"Thư mục không tồn tại: {folderPath}");
+                    return;
+                }
+
+                var files = Directory.GetFiles(folderPath)
+                                     .Where(f => Path.GetFileName(f).Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                                     .ToList();
+
+                if (!files.Any())
+                {
+                    Console.WriteLine($"Không tìm thấy file chứa từ khóa: {keyword}");
+                    return;
+                }
+
+                foreach (var file in files)
+                {
+                    File.Delete(file);
+                    Console.WriteLine($"Đã xóa: {file}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi khi xóa file: {ex.Message}");
+            }
         }
     }
 }

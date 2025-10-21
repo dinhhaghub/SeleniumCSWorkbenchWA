@@ -189,6 +189,26 @@ namespace WorkbenchApp.UITest.Pages
         internal static By dxDReportDataNameX(string table, string nameX, string column) => By.XPath(@"//" + table + "//tbody//td[.='" + nameX + "']/following-sibling::td[" + column + "]");
 
         // Initiate the elements
+        public IWebElement HighlightElement(IWebElement element, string? color = null, string? setOrRemoveAttr = null)
+        {
+            color ??= "blue";
+            setOrRemoveAttr ??= "remove"; // chỉ định hành động "remove" hoặc "keep"
+
+            IJavaScriptExecutor js = (IJavaScriptExecutor)Driver.Browser;
+
+            // Highlight
+            js.ExecuteScript("arguments[0].setAttribute('style', arguments[1]);", element, "border: 3px solid " + color + ";");
+            Thread.Sleep(150);
+
+            // Unhighlight nếu setOrRemoveAttr = "remove"
+            if (setOrRemoveAttr.Equals("remove", StringComparison.OrdinalIgnoreCase))
+            {
+                js.ExecuteScript("arguments[0].removeAttribute('style');", element);
+            }
+
+            return element;
+        }
+
         public IWebElement dataStatusValue(int timeoutInSeconds, int row, string label)
         {
             wait = new WebDriverWait(Driver.Browser, TimeSpan.FromSeconds(timeoutInSeconds));
@@ -582,11 +602,39 @@ namespace WorkbenchApp.UITest.Pages
         // verify elements
         public string ValueDataStatusGetText(int timeoutInSeconds, int row, string label)
         {
-            return this.Map.dataStatusValue(timeoutInSeconds, row, label).Text;
+            return Map.dataStatusValue(timeoutInSeconds, row, label).Text;
+        }
+        public bool ValueDataStatusGetText(int timeoutInSeconds, int row, string label, string textParam)
+        {
+            ScrollIntoView(Map.dataStatusValue(timeoutInSeconds, row, label));
+            var iweb = Map.dataStatusValue(timeoutInSeconds, row, label);
+            bool element = Map.HighlightElement(iweb, "green").Text.Contains(textParam);
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_DataStatusGetText_" + label + "_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public string ValueDataStatusPrivateGetText(int timeoutInSeconds, int row, string label)
         {
             return this.Map.dataStatusPrivateValue(timeoutInSeconds, row, label).Text;
+        }
+        public bool ValueDataStatusPrivateGetText(int timeoutInSeconds, int row, string label, string textParam)
+        {
+            ScrollIntoView(Map.dataStatusPrivateValue(timeoutInSeconds, row, label));
+            var iweb = Map.dataStatusPrivateValue(timeoutInSeconds, row, label);
+            bool element = Map.HighlightElement(iweb, "green").Text.Contains(textParam);
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_DataStatusPrivateGetText_" + label + "_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public string IsDatePickerLabelShown(int timeoutInSeconds)
         {
@@ -609,33 +657,82 @@ namespace WorkbenchApp.UITest.Pages
         {
             return this.Map.redMsgFundDoesNotHaveReturnData(timeoutInSeconds).Text;
         }
-        public string HeaderTableOfReportGetText(int timeoutInSeconds, string table, int column)
+        public bool HeaderTableOfReportGetText(int timeoutInSeconds, string table, int column, string textParam)
         {
-            return this.Map.headerTableOfReport(timeoutInSeconds, table, column).Text;
+            ScrollIntoView(Map.headerTableOfReport(timeoutInSeconds, table, column));
+            var iweb = Map.headerTableOfReport(timeoutInSeconds, table, column);
+            bool element = Map.HighlightElement(iweb, "green").Text.Contains(textParam);
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_HeaderTableOfReport_" + table + "_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
-        public string HeaderTVPIAndDPITableOfReportGetText(int timeoutInSeconds, int column)
+        public bool HeaderTVPIAndDPITableOfReportGetText(int timeoutInSeconds, int column, string textParam)
         {
-            return this.Map.headerTVPIAndDPITableOfReport(timeoutInSeconds, column).Text;
+            ScrollIntoView(Map.headerTVPIAndDPITableOfReport(timeoutInSeconds, column));
+            var iweb = Map.headerTVPIAndDPITableOfReport(timeoutInSeconds, column);
+            bool element = Map.HighlightElement(iweb, "green").Text.Contains(textParam);
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_HeaderTVPIAndDPIReport_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public string DataTableOfReportGetText(int timeoutInSeconds, string table, string row, string column)
         {
-            return this.Map.dataTableOfReport(timeoutInSeconds, table, row, column).Text;
+            ScrollIntoView(Map.dataTableOfReport(timeoutInSeconds, table, row, column));
+            Map.HighlightElement(Map.dataTableOfReport(timeoutInSeconds, table, row, column), "blue");
+            return Map.dataTableOfReport(timeoutInSeconds, table, row, column).Text;
         }
         public string DataTVPIAndDPITableOfReportGetText(int timeoutInSeconds, string row, string column)
         {
-            return this.Map.dataTVPIAndDPITableOfReport(timeoutInSeconds, row, column).Text;
+            return Map.dataTVPIAndDPITableOfReport(timeoutInSeconds, row, column).Text;
         }
         public bool IsDrawdownGraphPublicReportShown(int timeoutInSeconds)
         {
-            return this.Map.publicReportDrawdownGraph(timeoutInSeconds).Enabled;
+            var iweb = Map.publicReportDrawdownGraph(timeoutInSeconds);
+            bool element = Map.HighlightElement(iweb, "green").Enabled;
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute"); // keep highlight in red border if fail
+                Driver.TakeScreenShot("ss_IsDrawdownGraphPublicReportShown" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public bool IsRollingCorrelationGraphPublicReportShown(int timeoutInSeconds)
         {
-            return this.Map.publicReportRollingCorrelationGraph(timeoutInSeconds).Enabled;
+            var iweb = this.Map.publicReportRollingCorrelationGraph(timeoutInSeconds);
+            bool element = Map.HighlightElement(iweb, "green").Enabled;
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute"); // keep highlight in red border if fail
+                Driver.TakeScreenShot("ss_IsRollingCorrelationGraphPublicReportShown" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public bool IsFundAumGraphPublicReportShown(int timeoutInSeconds)
         {
-            return this.Map.publicReportFundAumGraph(timeoutInSeconds).Enabled;
+            var iweb = this.Map.publicReportFundAumGraph(timeoutInSeconds);
+            bool element = Map.HighlightElement(iweb, "green").Enabled;
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute"); // keep highlight in red border if fail
+                Driver.TakeScreenShot("ss_IsFundAumGraphPublicReportShown" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public string ToastMessageInvalidFileGetText(int timeoutInSeconds)
         {
@@ -650,28 +747,78 @@ namespace WorkbenchApp.UITest.Pages
             return this.Map.toastMessageAlert(timeoutInSeconds, number).Text;
         }
         /// Deal by Deal
-        public string HeadertableDxDGetText(int timeoutInSeconds, string table, int column)
+        public bool HeadertableDxDGetText(int timeoutInSeconds, string table, int column, string textParam)
         {
-            return this.Map.headertableDxD(timeoutInSeconds, table, column).Text;
+            ScrollIntoView(Map.headertableDxD(timeoutInSeconds, table, column));
+            var iweb = Map.headertableDxD(timeoutInSeconds, table, column);
+            bool element = Map.HighlightElement(iweb, "green").Text.Contains(textParam);
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_HeadertableDxDGetText_" + table + "_"+ textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
-        public string HeadertableDxDNameXGetText(int timeoutInSeconds, string table, string nameX)
+        public bool HeadertableDxDNameXGetText(int timeoutInSeconds, string table, string nameX, string textParam)
         {
-            return this.Map.headertableDxDNameX(timeoutInSeconds, table, nameX).Text;
+            ScrollIntoView(Map.headertableDxDNameX(timeoutInSeconds, table, nameX));
+            var iweb = Map.headertableDxDNameX(timeoutInSeconds, table, nameX);
+            bool element = Map.HighlightElement(iweb, "green").Text.Contains(textParam);
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_HeaderDxDNameX_" + table + "_" + nameX + "_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public string DatatableDxDGetText(int timeoutInSeconds, string table, string row, string column)
         {
-            return this.Map.datatableDxD(timeoutInSeconds, table, row, column).Text;
+            ScrollIntoView(Map.datatableDxD(timeoutInSeconds, table, row, column));
+            return Map.datatableDxD(timeoutInSeconds, table, row, column).Text;
+        }
+        public bool DatatableDxDGetText(int timeoutInSeconds, string table, string row, string column, string textParam)
+        {
+            ScrollIntoView(Map.datatableDxD(timeoutInSeconds, table, row, column));
+            var iweb = Map.datatableDxD(timeoutInSeconds, table, row, column);
+            bool element = Map.HighlightElement(iweb, "green").Text.Contains(textParam);
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_DatatableDxD_" + table + "_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public string DatatableDxDNameXGetText(int timeoutInSeconds, string table, string nameX, string column)
         {
-            return this.Map.datatableDxDNameX(timeoutInSeconds, table, nameX, column).Text;
+            ScrollIntoView(Map.datatableDxDNameX(timeoutInSeconds, table, nameX, column));
+            return Map.datatableDxDNameX(timeoutInSeconds, table, nameX, column).Text;
+        }
+        public bool DatatableDxDNameXGetText(int timeoutInSeconds, string table, string nameX, string column, string textParam)
+        {
+            ScrollIntoView(Map.datatableDxDNameX(timeoutInSeconds, table, nameX, column));
+            var iweb = Map.datatableDxDNameX(timeoutInSeconds, table, nameX, column);
+            bool element = Map.HighlightElement(iweb, "green").Text.Contains(textParam);
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_DataDxDNameX_" + table + "_" + nameX + "_"+ textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
 
         // Actions
         public SearchFundAction InputNameToSearchFund(int timeoutInSeconds, string fundName)
         {
-            this.Map.inputTxtSearchFund(timeoutInSeconds).Clear();
-            this.Map.inputTxtSearchFund(timeoutInSeconds).SendKeys(fundName);
+            Map.HighlightElement(Map.inputTxtSearchFund(timeoutInSeconds)).Clear();
+            Map.HighlightElement(Map.inputTxtSearchFund(timeoutInSeconds)).SendKeys(fundName);
             return this;
         }
         public SearchFundAction ClickFundNameReturnOfResults(int timeout, string fundName, string sourceIcon)
@@ -679,7 +826,7 @@ namespace WorkbenchApp.UITest.Pages
             Actions actions = new Actions(Driver.Browser);
             actions.MoveToElement(this.Map.returnOfResultsFundNameWithItemSource(timeout, fundName, sourceIcon));
             actions.Perform();
-            this.Map.returnOfResultsFundNameWithItemSource(timeout, fundName, sourceIcon).Click();
+            Map.HighlightElement(Map.returnOfResultsFundNameWithItemSource(timeout, fundName, sourceIcon)).Click();
             return this;
         }
         public SearchFundAction ClickFundNameReturnOfResults(int timeout, string fundName, string sourceIcon, string index)
@@ -687,7 +834,7 @@ namespace WorkbenchApp.UITest.Pages
             Actions actions = new Actions(Driver.Browser);
             actions.MoveToElement(this.Map.returnOfResultsFundNameWithItemSource(timeout, fundName, sourceIcon, index));
             actions.Perform();
-            this.Map.returnOfResultsFundNameWithItemSource(timeout, fundName, sourceIcon, index).Click();
+            Map.HighlightElement(Map.returnOfResultsFundNameWithItemSource(timeout, fundName, sourceIcon, index)).Click();
             return this;
         }
         public SearchFundAction ClickFundNameReturnOfResults(int timeout, string fundName)
@@ -695,24 +842,24 @@ namespace WorkbenchApp.UITest.Pages
             Actions actions = new Actions(Driver.Browser);
             actions.MoveToElement(this.Map.returnOfResultsFundName(timeout, fundName));
             actions.Perform();
-            this.Map.returnOfResultsFundName(timeout, fundName).Click();
+            Map.HighlightElement(Map.returnOfResultsFundName(timeout, fundName)).Click();
             return this;
         }
         public SearchFundAction ClickUserInputSubSection(int timeoutInSeconds, string sectionName)
         {
-            this.Map.subSectionUserInput(timeoutInSeconds, sectionName).Click();
+            Map.HighlightElement(Map.subSectionUserInput(timeoutInSeconds, sectionName)).Click();
             return this;
         }
         public SearchFundAction InputTxtLabelField(string label, string text)
         {
-            this.Map.inputTxtLabel(label).Clear();
-            this.Map.inputTxtLabel(label).SendKeys(text);
+            Map.HighlightElement(Map.inputTxtLabel(label)).Clear();
+            Map.HighlightElement(Map.inputTxtLabel(label)).SendKeys(text);
             return this;
         }
         public SearchFundAction InputTxtSearchLabelField(string label, string text)
         {
-            this.Map.inputTxtSearchLabel(label).Clear();
-            this.Map.inputTxtSearchLabel(label).SendKeys(text);
+            Map.HighlightElement(Map.inputTxtSearchLabel(label)).Clear();
+            Map.HighlightElement(Map.inputTxtSearchLabel(label)).SendKeys(text);
             return this;
         }
         public SearchFundAction ClickDatePickerTitleButton(int timeoutInSeconds, string title)
@@ -726,22 +873,22 @@ namespace WorkbenchApp.UITest.Pages
         }
         public SearchFundAction ClickDatePickerYearOnTopButton(int timeoutInSeconds)
         {
-            this.Map.buttonOnTopDatePickerYear(timeoutInSeconds).Click();
+            Map.HighlightElement(Map.buttonOnTopDatePickerYear(timeoutInSeconds)).Click();
             return this;
         }
         public SearchFundAction ClickMonthOrYearInDatePicker(int timeoutInSeconds, string monthOrYear)
         {
-            this.Map.buttonDatePickerMonthOrYear(timeoutInSeconds, monthOrYear).Click();
+            Map.HighlightElement(Map.buttonDatePickerMonthOrYear(timeoutInSeconds, monthOrYear)).Click();
             return this;
         }
         public SearchFundAction ClickDateInDatePicker(int timeoutInSeconds, string date)
         {
-            this.Map.buttonDatePickerDate(timeoutInSeconds, date).Click();
+            Map.HighlightElement(Map.buttonDatePickerDate(timeoutInSeconds, date)).Click();
             return this;
         }
         public SearchFundAction ClickFieldCheckbox(string label)
         {
-            this.Map.checkboxField(label).Click();
+            Map.HighlightElement(Map.checkboxField(label)).Click();
             return this;
         }
         public SearchFundAction ClickLabelDropdown(int timeoutInSeconds, string label)
@@ -749,61 +896,61 @@ namespace WorkbenchApp.UITest.Pages
             Actions actions = new Actions(Driver.Browser);
             actions.MoveToElement(this.Map.dropdownLabel(timeoutInSeconds, label));
             actions.Perform();
-            this.Map.dropdownLabel(timeoutInSeconds, label).Click();
+            Map.HighlightElement(Map.dropdownLabel(timeoutInSeconds, label)).Click();
             return this;
         }
         public SearchFundAction SelectItemInDropdown(int timeoutInSeconds, string item)
         {
-            ScrollIntoView(this.Map.selectItemDropdown(timeoutInSeconds, item));
+            ScrollIntoView(Map.selectItemDropdown(timeoutInSeconds, item));
             IJavaScriptExecutor je = (IJavaScriptExecutor)Driver.Browser;
-            je.ExecuteScript("arguments[0].click();", this.Map.selectItemDropdown(timeoutInSeconds, item));
+            je.ExecuteScript("arguments[0].click();", Map.selectItemDropdown(timeoutInSeconds, item));
             return this;
         }
         public SearchFundAction ClickCRBMAddButton(int timeoutInSeconds)
         {
-            ScrollIntoView(this.Map.buttonAddCRBM(timeoutInSeconds));
+            ScrollIntoView(Map.buttonAddCRBM(timeoutInSeconds));
             IJavaScriptExecutor je = (IJavaScriptExecutor)Driver.Browser;
-            je.ExecuteScript("arguments[0].click();", this.Map.buttonAddCRBM(timeoutInSeconds));
+            je.ExecuteScript("arguments[0].click();", Map.buttonAddCRBM(timeoutInSeconds));
             return this;
         }
         public SearchFundAction ClickCRBMDeleteButton(int timeoutInSeconds, int rowNumber)
         {
             PageDownToScrollDownPage();
-            ScrollIntoView(this.Map.buttonAddCRBM(timeoutInSeconds));
+            ScrollIntoView(Map.buttonAddCRBM(timeoutInSeconds));
             IJavaScriptExecutor je = (IJavaScriptExecutor)Driver.Browser;
-            je.ExecuteScript("arguments[0].click();", this.Map.buttonDeleteCRBM(timeoutInSeconds, rowNumber));
+            je.ExecuteScript("arguments[0].click();", Map.buttonDeleteCRBM(timeoutInSeconds, rowNumber));
             return this;
         }
         public SearchFundAction InputTxtNameCRBMRow(int timeoutInSeconds, int number, string text)
         {
             ScrollIntoView(this.Map.inputTxtNameCRBMRow(timeoutInSeconds, number));
-            this.Map.inputTxtNameCRBMRow(timeoutInSeconds, number).Clear();
-            this.Map.inputTxtNameCRBMRow(timeoutInSeconds, number).SendKeys(text);
+            Map.HighlightElement(Map.inputTxtNameCRBMRow(timeoutInSeconds, number)).Clear();
+            Map.HighlightElement(Map.inputTxtNameCRBMRow(timeoutInSeconds, number)).SendKeys(text);
             return this;
         }
         public SearchFundAction ClickNameCRBMReturnOfResults(int timeoutInSeconds, string benchmark)
         {
             IJavaScriptExecutor je = (IJavaScriptExecutor)Driver.Browser;
-            je.ExecuteScript("arguments[0].click();", this.Map.returnOfResultsNameCRBM(timeoutInSeconds, benchmark));
+            je.ExecuteScript("arguments[0].click();", Map.returnOfResultsNameCRBM(timeoutInSeconds, benchmark));
             return this;
         }
         public SearchFundAction InputNumberBetaCRBMRow(int timeoutInSeconds, int rowNumber, string text)
         {
-            this.Map.inputNumberBetaCRBMRow(timeoutInSeconds, rowNumber).Clear();
-            this.Map.inputNumberBetaCRBMRow(timeoutInSeconds, rowNumber).SendKeys(text);
+            Map.HighlightElement(Map.inputNumberBetaCRBMRow(timeoutInSeconds, rowNumber)).Clear();
+            Map.HighlightElement(Map.inputNumberBetaCRBMRow(timeoutInSeconds, rowNumber)).SendKeys(text);
             return this;
         }
         public SearchFundAction InputNumberGrossExposureCRBMRow(int timeoutInSeconds, int number, string text)
         {
-            this.Map.inputNumberGrossExposureCRBMRow(timeoutInSeconds, number).Clear();
-            this.Map.inputNumberGrossExposureCRBMRow(timeoutInSeconds, number).SendKeys(text);
+            Map.HighlightElement(Map.inputNumberGrossExposureCRBMRow(timeoutInSeconds, number)).Clear();
+            Map.HighlightElement(Map.inputNumberGrossExposureCRBMRow(timeoutInSeconds, number)).SendKeys(text);
             return this;
         }
         public SearchFundAction ClickAddButtonInXTable(int timeoutInSeconds, string attrValue)
         {
-            ScrollIntoView(this.Map.buttonAddInXTable(timeoutInSeconds, attrValue));
+            ScrollIntoView(Map.buttonAddInXTable(timeoutInSeconds, attrValue));
             IJavaScriptExecutor je = (IJavaScriptExecutor)Driver.Browser;
-            je.ExecuteScript("arguments[0].click();", this.Map.buttonAddInXTable(timeoutInSeconds, attrValue));
+            je.ExecuteScript("arguments[0].click();", Map.buttonAddInXTable(timeoutInSeconds, attrValue));
             return this;
         }
         public SearchFundAction ClickDeleteButtonInXTable(int timeoutInSeconds, string attrValue, string rowNumber)
@@ -817,15 +964,15 @@ namespace WorkbenchApp.UITest.Pages
         public SearchFundAction InputTxtNameBenchmarkXTableRow(int timeoutInSeconds, string attrValue, string number, string text)
         {
             ScrollIntoView(Map.inputTxtNameBenchmarkXTableRow(timeoutInSeconds, attrValue, number));
-            Map.inputTxtNameBenchmarkXTableRow(timeoutInSeconds, attrValue, number).Clear();
-            Map.inputTxtNameBenchmarkXTableRow(timeoutInSeconds, attrValue, number).SendKeys(text);
+            Map.HighlightElement(Map.inputTxtNameBenchmarkXTableRow(timeoutInSeconds, attrValue, number)).Clear();
+            Map.HighlightElement(Map.inputTxtNameBenchmarkXTableRow(timeoutInSeconds, attrValue, number)).SendKeys(text);
             return this;
         }
         public SearchFundAction InputTxtExposureBenchmarkXTableRow(int timeoutInSeconds, string attrValue, string number, string text)
         {
             ScrollIntoView(Map.inputTxtExposureBenchmarkXTableRow(timeoutInSeconds, attrValue, number));
-            Map.inputTxtExposureBenchmarkXTableRow(timeoutInSeconds, attrValue, number).Clear();
-            Map.inputTxtExposureBenchmarkXTableRow(timeoutInSeconds, attrValue, number).SendKeys(text);
+            Map.HighlightElement(Map.inputTxtExposureBenchmarkXTableRow(timeoutInSeconds, attrValue, number)).Clear();
+            Map.HighlightElement(Map.inputTxtExposureBenchmarkXTableRow(timeoutInSeconds, attrValue, number)).SendKeys(text);
             return this;
         }
         public SearchFundAction ClickRunButton(int timeoutInSeconds)
@@ -835,7 +982,7 @@ namespace WorkbenchApp.UITest.Pages
 
             // MouseHover and Click
             Actions action = new Actions(Driver.Browser);
-            action.MoveToElement(this.Map.buttonRun(timeoutInSeconds)).Click(this.Map.buttonRun(timeoutInSeconds)).Perform();
+            action.MoveToElement(Map.buttonRun(timeoutInSeconds)).Click(Map.HighlightElement(Map.buttonRun(timeoutInSeconds))).Perform();
             return this;
         }
         public SearchFundAction ClickLabelButton(int timeoutInSeconds, string label)
@@ -845,12 +992,12 @@ namespace WorkbenchApp.UITest.Pages
 
             // MouseHover and Click
             Actions action = new Actions(Driver.Browser);
-            action.MoveToElement(this.Map.buttonRun(timeoutInSeconds)).Click(this.Map.buttonLabel(timeoutInSeconds, label)).Perform();
+            action.MoveToElement(Map.buttonRun(timeoutInSeconds)).Click(Map.HighlightElement(Map.buttonLabel(timeoutInSeconds, label))).Perform();
             return this;
         }
         public SearchFundAction ClickButtonInDialog(int timeoutInSeconds, string label)
         {
-            this.Map.buttonInDialogPopup(timeoutInSeconds, label).Click();
+            Map.HighlightElement(Map.buttonInDialogPopup(timeoutInSeconds, label)).Click();
             return this;
         }
         public SearchFundAction UploadFileInput(string filepath)
@@ -860,34 +1007,34 @@ namespace WorkbenchApp.UITest.Pages
         }
         public SearchFundAction ClickCloseToastMessageButton(int timeoutInSeconds)
         {
-            this.Map.buttonCloseToastMessage(timeoutInSeconds).Click();
+            Map.HighlightElement(Map.buttonCloseToastMessage(timeoutInSeconds)).Click();
             return this;
         }
         public SearchFundAction ClickDestinationDropdown(int timeoutInSeconds, int row)
         {
             OpenQA.Selenium.Interactions.Actions actions = new OpenQA.Selenium.Interactions.Actions(Driver.Browser);
-            actions.MoveToElement(this.Map.dropdownDestination(timeoutInSeconds, row));
-            actions.Click(this.Map.dropdownDestination(timeoutInSeconds, row)).Build().Perform();
+            actions.MoveToElement(Map.dropdownDestination(timeoutInSeconds, row));
+            actions.Click(Map.HighlightElement(Map.dropdownDestination(timeoutInSeconds, row))).Build().Perform();
             return this;
         }
         public SearchFundAction SelectItemInDestinationDropdown(int timeoutInSeconds, int row, string item)
         {
-            ScrollIntoView(this.Map.selectItemDestinationDropdown(timeoutInSeconds, row, item));
+            ScrollIntoView(Map.selectItemDestinationDropdown(timeoutInSeconds, row, item));
             //this.Map.selectItemDestinationDropdown(timeoutInSeconds, row, item).Click(); // --> element click intercepted
 
             // Try with javascript
             IJavaScriptExecutor je = (IJavaScriptExecutor)Driver.Browser;
-            je.ExecuteScript("arguments[0].click();", this.Map.selectItemDestinationDropdown(timeoutInSeconds, row, item));
+            je.ExecuteScript("arguments[0].click();", Map.selectItemDestinationDropdown(timeoutInSeconds, row, item));
             return this;
         }
         public SearchFundAction InputAsOfDate(int timeoutInSeconds, string date)
         {
-            this.Map.inputTxtAsOfDate.SendKeys(OpenQA.Selenium.Keys.Control + "a");
-            this.Map.inputTxtAsOfDate.SendKeys(date);
+            Map.HighlightElement(Map.inputTxtAsOfDate).SendKeys(OpenQA.Selenium.Keys.Control + "a");
+            Map.HighlightElement(Map.inputTxtAsOfDate).SendKeys(date);
             // this.Map.buttonAsOfDate(timeoutInSeconds).Click(); --> Element Click Intercepted Exception
             // Try with javascript if Element Click Intercepted Exception
             IJavaScriptExecutor je = (IJavaScriptExecutor)Driver.Browser;
-            je.ExecuteScript("arguments[0].click();", this.Map.buttonAsOfDate(timeoutInSeconds));
+            je.ExecuteScript("arguments[0].click();", Map.buttonAsOfDate(timeoutInSeconds));
             WaitForElementInvisible(10, AddEditFundPage.overlayDropdown);
             return this;
         }
@@ -907,8 +1054,8 @@ namespace WorkbenchApp.UITest.Pages
         public SearchFundAction ClickBackButton(int timeoutInSeconds)
         {
             OpenQA.Selenium.Interactions.Actions actions = new OpenQA.Selenium.Interactions.Actions(Driver.Browser);
-            actions.MoveToElement(this.Map.buttonBack(timeoutInSeconds));
-            actions.Click(this.Map.buttonBack(timeoutInSeconds)).Build().Perform();
+            actions.MoveToElement(Map.buttonBack(timeoutInSeconds));
+            actions.Click(Map.HighlightElement(Map.buttonBack(timeoutInSeconds))).Build().Perform();
             return this;
         }
         #endregion

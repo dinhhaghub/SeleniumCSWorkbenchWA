@@ -42,6 +42,26 @@ namespace WorkbenchApp.UITest.Pages
         internal static By addEditFundsMsgContentPopup = By.XPath(@"//app-add-edit-fund//div[@role='dialog']/div[contains(@class,'p-dialog-content')]");
 
         // Initiate the elements
+        public IWebElement HighlightElement(IWebElement element, string? color = null, string? setOrRemoveAttr = null)
+        {
+            color ??= "blue";
+            setOrRemoveAttr ??= "remove"; // chỉ định hành động "remove" hoặc "keep"
+
+            IJavaScriptExecutor js = (IJavaScriptExecutor)Driver.Browser;
+
+            // Highlight
+            js.ExecuteScript("arguments[0].setAttribute('style', arguments[1]);", element, "border: 3px solid " + color + ";");
+            Thread.Sleep(150);
+
+            // Unhighlight nếu setOrRemoveAttr = "remove"
+            if (setOrRemoveAttr.Equals("remove", StringComparison.OrdinalIgnoreCase))
+            {
+                js.ExecuteScript("arguments[0].removeAttribute('style');", element);
+            }
+
+            return element;
+        }
+
         public IWebElement iconExpandCollapse(int timeoutInSeconds, string section)
         {
             wait = new WebDriverWait(Driver.Browser, TimeSpan.FromSeconds(timeoutInSeconds));
@@ -155,47 +175,87 @@ namespace WorkbenchApp.UITest.Pages
         }
 
         // verify elements
-        public string ColumnNamesInSectionGetText(int timeoutInSeconds, string section, string numberRow, string numberColumn)
+        public bool ColumnNamesInSectionGetText(int timeoutInSeconds, string section, string numberRow, string numberColumn, string textParam)
         {
-            return Map.nameColumnsInSection(timeoutInSeconds, section, numberRow, numberColumn).Text;
+            var iweb = Map.nameColumnsInSection(timeoutInSeconds, section, numberRow, numberColumn);
+            bool element = Map.HighlightElement(iweb, "green").Text.Contains(textParam);
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_ColumnNamesInSection_" + section + "_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public string DataInSectionGetText(int timeoutInSeconds, string section, string numberRow, string numberColumn)
         {
             return Map.dataOfSection(timeoutInSeconds, section, numberRow, numberColumn).Text;
         }
+        public bool DataInSectionGetText(int timeoutInSeconds, string section, string numberRow, string numberColumn, string textParam)
+        {
+            var iweb = Map.dataOfSection(timeoutInSeconds, section, numberRow, numberColumn);
+            bool element = Map.HighlightElement(iweb, "green").Text.Contains(textParam);
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_DataInSection_" + section + "_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
+        }
         public string ColumnNameSortIconInSectionGetStatus(int timeoutInSeconds, string section, string row, string columnName)
         {
             return Map.sortIconInSectionColumnNameGetStatus(timeoutInSeconds, section, row, columnName).GetAttribute("class");
         }
-        public string AssetNameInSectionNameColDataGetText(int timeoutInSeconds, string sectionName, string assetName, string column)
+        public bool AssetNameInSectionNameColDataGetText(int timeoutInSeconds, string sectionName, string assetName, string column, string textParam)
         {
-            return Map.dataColAssetNameInSectionName(timeoutInSeconds,sectionName, assetName, column).Text;
+            var iweb = Map.dataColAssetNameInSectionName(timeoutInSeconds, sectionName, assetName, column);
+            bool element = Map.HighlightElement(iweb, "green").Text.Contains(textParam);
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_AssetNameInSection_" + sectionName + "_" + assetName + "_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
-        public string AddEditFundsMsgContentPopupGetText(int timeoutInSeconds)
+        public bool AddEditFundsMsgContentPopupGetText(int timeoutInSeconds, string textParam)
         {
-            return Map.msgContentPopupAddEditFunds(timeoutInSeconds).Text;
+            var iweb = Map.msgContentPopupAddEditFunds(timeoutInSeconds);
+            bool element = Map.HighlightElement(iweb, "green").Text.Contains(textParam);
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_AddEditFundsMsgContentPopup_" + textParam + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
 
         // Actions
         public ScenarioTestAction ClickExpandCollapseIcon(int timeoutInSeconds, string section) 
         {
-            this.Map.iconExpandCollapse(timeoutInSeconds, section).Click();
+            Map.HighlightElement(Map.iconExpandCollapse(timeoutInSeconds, section)).Click();
             return this;
         }
         public ScenarioTestAction ClickColumnNameInSectionSortIcon(int timeoutInSeconds, string section, string row, string columnName)
         {
-            this.Map.sortIconInSectionColumnName(timeoutInSeconds, section, row, columnName).Click();
+            Map.HighlightElement(Map.sortIconInSectionColumnName(timeoutInSeconds, section, row, columnName)).Click();
             return this;
         }
         public ScenarioTestAction InputSearchKeyWordInSection(string section, string text)
         {
-            this.Map.txtSearchKeyWordInSection(section).Clear(); Thread.Sleep(250);
-            this.Map.txtSearchKeyWordInSection(section).SendKeys(text); Thread.Sleep(500);
+            Map.HighlightElement(Map.txtSearchKeyWordInSection(section)).Clear(); Thread.Sleep(250);
+            Map.HighlightElement(Map.txtSearchKeyWordInSection(section)).SendKeys(text); Thread.Sleep(500);
             return this;
         }
         public ScenarioTestAction ClickAndInputScenarioFlowsLine(int timeoutInSeconds, string row, string text)
         {
-            this.Map.lineScenarioFlows(timeoutInSeconds, row).Click();
+            Map.HighlightElement(Map.lineScenarioFlows(timeoutInSeconds, row)).Click();
             //this.Map.lineScenarioFlows(timeoutInSeconds, row).Clear(); Thread.Sleep(250);
             //this.Map.lineScenarioFlows(timeoutInSeconds, row).SendKeys(text); Thread.Sleep(250);
 
@@ -210,29 +270,29 @@ namespace WorkbenchApp.UITest.Pages
         }
         public ScenarioTestAction ClickAssetNameInSectionName(int timeoutInSeconds, string sectionName, string assetName)
         {
-            this.Map.sectionNameContainsAssetName(timeoutInSeconds, sectionName, assetName).Click();
+            Map.HighlightElement(Map.sectionNameContainsAssetName(timeoutInSeconds, sectionName, assetName)).Click();
             return this;
         }
         /// Add/Edit Funds <summary>
         public ScenarioTestAction ClickAddEditFundsAssetDropDown(int timeoutInSeconds, string row)
         {
-            this.Map.assetDropDownAddEditFunds(timeoutInSeconds, row).Click();
+            Map.HighlightElement(Map.assetDropDownAddEditFunds(timeoutInSeconds, row)).Click();
             return this;
         }
         public ScenarioTestAction ClickAddEditFundsAssetSelectItemDropDown(int timeoutInSeconds, string row, string item)
         {
-            this.Map.assetSelectItemDropDownAddEditFunds(timeoutInSeconds, row, item).Click();
+            Map.HighlightElement(Map.assetSelectItemDropDownAddEditFunds(timeoutInSeconds, row, item)).Click();
             return this;
         }
         public ScenarioTestAction InputAddEditFunds(int timeoutInSeconds, string row, string column, string text)
         {
-            this.Map.inputAddEditFunds(timeoutInSeconds, row, column).Clear(); Thread.Sleep(250);
-            this.Map.inputAddEditFunds(timeoutInSeconds, row, column).SendKeys(text); Thread.Sleep(250);
+            Map.HighlightElement(Map.inputAddEditFunds(timeoutInSeconds, row, column)).Clear(); Thread.Sleep(250);
+            Map.HighlightElement(Map.inputAddEditFunds(timeoutInSeconds, row, column)).SendKeys(text); Thread.Sleep(250);
             return this;
         }
         public ScenarioTestAction ClickAddEditFundsPosButton(int timeoutInSeconds, string row, string column)
         {
-            this.Map.buttonAddEditFunds(timeoutInSeconds, row, column).Click();
+            Map.HighlightElement(Map.buttonAddEditFunds(timeoutInSeconds, row, column)).Click();
             return this;
         }
         #endregion

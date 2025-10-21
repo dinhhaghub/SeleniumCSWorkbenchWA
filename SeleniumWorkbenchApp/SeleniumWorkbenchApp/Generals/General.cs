@@ -74,6 +74,17 @@ namespace WorkbenchApp.UITest.Generals
         internal static By rowValuesInRatingTab(string tabName, int row, int column) => By.XPath(@"//p-tabpanel[@header='" + tabName + "']//table[@role='table']/tbody/tr[" + row + "]/td[" + column + "]");
 
         // Initiate the elements
+        public IWebElement HighlightElement(IWebElement element, string? color = null, string? setOrRemoveAttr = null) // Highlight & Un-Highlight Element
+        {
+            // Check if give color/setOrRemoveAttr with a specific color/setOrRemoveAttr, if no then will get blue color (by default)
+            color ??= "blue"; setOrRemoveAttr ??= "removeAttribute";
+
+            IJavaScriptExecutor? js = Driver.Browser as IJavaScriptExecutor;
+            js.ExecuteScript("arguments[0].setAttribute('style', arguments[1]);", element, " border: 3px solid " + color + ";"); Thread.Sleep(150);
+            js.ExecuteScript("arguments[0]." + setOrRemoveAttr + "('style', arguments[1]);", element, " border: 3px solid " + color + ";"); // un-highlight
+            return element;
+        }
+
         public IWebElement dateInTableHeaderName(int timeoutInSeconds, string headerName)
         {
             wait = new WebDriverWait(Driver.Browser, TimeSpan.FromSeconds(timeoutInSeconds));
@@ -260,13 +271,24 @@ namespace WorkbenchApp.UITest.Generals
                 return true;
             }
         }
-        
-        public string DateInTableHeaderNameGetText(int timeoutInSeconds, string headerName)
+        public bool DateInTableHeaderNameGetText(int timeoutInSeconds, string headerName, string textParam)
         {
-            return Map.dateInTableHeaderName(timeoutInSeconds, headerName).Text;
+            ScrollIntoView(Map.dateInTableHeaderName(timeoutInSeconds, headerName));
+            var iweb = Map.dateInTableHeaderName(timeoutInSeconds, headerName);
+            bool element = Map.HighlightElement(iweb, "green").Text.Contains(textParam);
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_DateInTableHeaderName_" + headerName + "_" + textParam + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public string DataInTableHeaderGetText(int timeoutInSeconds, string headerName, string pageName)
         {
+            // Should not use HighlightElement here, because it will not work with order column names
+            ScrollIntoView(Map.dataInTableHeader(timeoutInSeconds, headerName, pageName));
             return Map.dataInTableHeader(timeoutInSeconds, headerName, pageName).Text;
         }
         public string MenuTitlesGetText(int timeoutInSeconds, int number)
@@ -275,27 +297,70 @@ namespace WorkbenchApp.UITest.Generals
         }
         public bool IsButtonLabelShown(int timeoutInSeconds, string labelOrInnerText)
         {
-            return Map.buttonLabel(timeoutInSeconds, labelOrInnerText).Displayed;
+            ScrollIntoView(Map.buttonLabel(timeoutInSeconds, labelOrInnerText));
+            var iweb = Map.buttonLabel(timeoutInSeconds, labelOrInnerText);
+            bool element = Map.HighlightElement(iweb, "green").Displayed;
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_IsButtonLabelShown_" + labelOrInnerText + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public bool IsAddFilterButtonShown(int timeoutInSeconds)
         {
-            return Map.btnAddFilter(timeoutInSeconds).Displayed;
+            ScrollIntoView(Map.btnAddFilter(timeoutInSeconds));
+            var iweb = Map.btnAddFilter(timeoutInSeconds);
+            bool element = Map.HighlightElement(iweb, "green").Displayed;
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_IsAddFilterButtonShown_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public bool IsGroupUngroupShowFundButtonShown(int timeoutInSeconds, string label)
         {
-            return Map.btnGroupUngroupShowFund(timeoutInSeconds, label).Displayed;
+            ScrollIntoView(Map.btnGroupUngroupShowFund(timeoutInSeconds, label));
+            var iweb = Map.btnGroupUngroupShowFund(timeoutInSeconds, label);
+            bool element = Map.HighlightElement(iweb, "green").Displayed;
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_IsGroupUngroupShowFundBtnShown_" + label + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public string ColumnNamesInAssetTableGetText(int timeoutInSeconds, int number)
         {
+            // Should not use HighlightElement here, because it will not work with order column names
+            ScrollIntoView(Map.assetTableColumnNames(timeoutInSeconds, number));
             return Map.assetTableColumnNames(timeoutInSeconds, number).Text;
         }
         public string RowValuesInAssetTableGetText(int timeoutInSeconds, int row, int column)
         {
+            ScrollIntoView(Map.assetTableRowValues(timeoutInSeconds, row, column));
             return Map.assetTableRowValues(timeoutInSeconds, row, column).Text;
         }
-        public string RowNameInAssetTableGetText(int timeoutInSeconds, string nameStartsWith)
+        public bool RowNameInAssetTableGetText(int timeoutInSeconds, string nameStartsWith, string textParam)
         {
-            return Map.assetTableRowName(timeoutInSeconds, nameStartsWith).Text;
+            ScrollIntoView(Map.assetTableRowName(timeoutInSeconds, nameStartsWith));
+            var iweb = Map.assetTableRowName(timeoutInSeconds, nameStartsWith);
+            bool element = Map.HighlightElement(iweb, "green").Text.Contains(textParam);
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_RowAssetTableGetText_" + nameStartsWith + "_"+ textParam + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public string SortIconAssetTableGetStatus(int timeoutInSeconds, string columName)
         {
@@ -303,11 +368,22 @@ namespace WorkbenchApp.UITest.Generals
         }
         public string RatingTabHeaderGetText(int timeoutInSeconds,string tabName, int number)
         {
+            ScrollIntoView(Map.headerRatingTab(timeoutInSeconds, tabName, number));
             return Map.headerRatingTab(timeoutInSeconds, tabName, number).Text;
         }
-        public string RatingHistoryRowUsersGetText(int timeoutInSeconds, int mainRow, int rowData)
+        public bool RatingHistoryRowUsersGetText(int timeoutInSeconds, int mainRow, int rowData, string textParam)
         {
-            return Map.ratingHistoryRowUsers(timeoutInSeconds, mainRow, rowData).Text;
+            ScrollIntoView(Map.ratingHistoryRowUsers(timeoutInSeconds, mainRow, rowData));
+            var iweb = Map.ratingHistoryRowUsers(timeoutInSeconds, mainRow, rowData);
+            bool element = Map.HighlightElement(iweb, "green").Text.Contains(textParam);
+            if (element == false)
+            {
+                Map.HighlightElement(iweb, "red", "setAttribute");
+                Driver.TakeScreenShot("ss_RatingHistoryRowUsers_" + mainRow + "_" + rowData + "_" + textParam + "_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss.ffftt"));
+                Map.HighlightElement(iweb, "red", "remove"); // un-highlight
+                return element;
+            }
+            return element;
         }
         public string RatingTabRowValuesGetText(int timeoutInSeconds,string tabName, int row, int column)
         {
@@ -374,28 +450,29 @@ namespace WorkbenchApp.UITest.Generals
             }
         }
         public GeneralAction ClickSortAssetTableButton(int timeoutInSeconds, string columName) 
-        { 
-            this.Map.btnSortAssetTable(timeoutInSeconds, columName).Click();
+        {
+            // this method should not be used HighlightElement, because it will not work with sort icon
+            Map.btnSortAssetTable(timeoutInSeconds, columName).Click();
             return this;
         }
         public GeneralAction ClickGroupUngroupShowFundButton(int timeoutInSeconds, string buttonName)
         {
-            this.Map.btnGroupUngroupShowFund(timeoutInSeconds, buttonName).Click();
+            Map.HighlightElement(Map.btnGroupUngroupShowFund(timeoutInSeconds, buttonName)).Click();
             return this;
         }
         public GeneralAction ClickRowValuesInAssetTable(int timeoutInSeconds, int row, int column)
         {
-            this.Map.assetTableRowValues(timeoutInSeconds, row, column).Click();
+            Map.HighlightElement(Map.assetTableRowValues(timeoutInSeconds, row, column)).Click();
             return this;
         }
         public GeneralAction ClickToExpandAssetName(int timeoutInSeconds, string name)
         {
-            this.Map.nameAsset(timeoutInSeconds, name).Click();
+            Map.HighlightElement(Map.nameAsset(timeoutInSeconds, name)).Click();
             return this;
         }
         public GeneralAction ClickTabNameInRatingDialog(int timeoutInSeconds, string tabName)
         {
-            this.Map.tabNameRatingDialog(timeoutInSeconds, tabName).Click();
+            Map.HighlightElement(Map.tabNameRatingDialog(timeoutInSeconds, tabName)).Click();
             return this;
         }
         public GeneralAction SlideSliderLabelRating(int timeoutInSeconds, string label, int ArrowLeftXTimes)
@@ -403,39 +480,39 @@ namespace WorkbenchApp.UITest.Generals
             for (int i = 0; i <= ArrowLeftXTimes; i++) 
             {
                 // Slide to LEFT
-                this.Map.sliderLabelRating(timeoutInSeconds, label).SendKeys(OpenQA.Selenium.Keys.ArrowLeft);
+                Map.sliderLabelRating(timeoutInSeconds, label).SendKeys(OpenQA.Selenium.Keys.ArrowLeft);
             }
             return this;
         }
         public GeneralAction ClickButtonLabel(int timeoutInSeconds, string label)
         {
             Actions action = new Actions(Driver.Browser);
-            action.MoveToElement(this.Map.buttonLabel(timeoutInSeconds, label)).Click(this.Map.buttonLabel(timeoutInSeconds, label)).Perform();
+            action.MoveToElement(Map.buttonLabel(timeoutInSeconds, label)).Click(Map.HighlightElement(Map.buttonLabel(timeoutInSeconds, label))).Perform();
             return this;
         }
         public GeneralAction ClickLabelDropdown(int timeoutInSeconds, string label)
         {
-            this.Map.dropdownLabel(timeoutInSeconds, label).Click();
+            Map.HighlightElement(Map.dropdownLabel(timeoutInSeconds, label)).Click();
             return this;
         }
         public GeneralAction ClickLabelDropdownRating(int timeoutInSeconds, string label)
         {
-            this.Map.dropdownLabelRating(timeoutInSeconds, label).Click();
+            Map.HighlightElement(Map.dropdownLabelRating(timeoutInSeconds, label)).Click();
             return this;
         }
         public GeneralAction SelectItemInDropdown(int timeoutInSeconds, string item)
         {
-            this.Map.selectItemDropdown(timeoutInSeconds, item).Click();
+            Map.HighlightElement(Map.selectItemDropdown(timeoutInSeconds, item)).Click();
             return this;
         }
         public GeneralAction ClickSaveRatingButton(int timeoutInSeconds)
         {
-            this.Map.buttonSaveRating(timeoutInSeconds).Click();
+            Map.HighlightElement(Map.buttonSaveRating(timeoutInSeconds)).Click();
             return this;
         }
         public GeneralAction ClickAssetNameButton(int timeoutInSeconds, string name, string colNumber)
         {
-            this.Map.buttonAssetName(timeoutInSeconds, name, colNumber).Click();
+            Map.HighlightElement(Map.buttonAssetName(timeoutInSeconds, name, colNumber)).Click();
             return this;
         }
         #endregion

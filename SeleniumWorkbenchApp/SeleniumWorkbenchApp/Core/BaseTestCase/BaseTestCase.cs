@@ -25,6 +25,9 @@ namespace WorkbenchApp.UITest.Core.BaseTestCase
         internal static ExtentSparkReporter? htmlReporter; // ExtentHtmlReporter (V4), ExtentV3HtmlReporter (V3)
         public static ExtentReports? extent;
         public static ExtentTest? test;
+        public static string fileExportPath = Path.GetFullPath(@"../../../../../TestResults/");
+        public static string fileName = "Results";
+        public static string reportFile = DateTime.Now.ToString().Replace("/", "_").Replace(":", "_").Replace(" ", "_") + @"_" + fileName + ".html";
 
         public TestContext TestContext
         {
@@ -50,7 +53,7 @@ namespace WorkbenchApp.UITest.Core.BaseTestCase
             {
                 LoginPage.configurationFile();
                 string instanceName = LoginPage.instanceName;
-                string fileExportPath = Path.GetFullPath(@"../../../../TestResults/");
+                string fileExportPath = Path.GetFullPath(@"../../../../../TestResults/");
                 string reportFile = DateTime.Now.ToString().Replace("/", "_").Replace(":", "_").Replace(" ", "_") + @"_" + fileName + ".html";
                 htmlReporter = new ExtentSparkReporter(fileExportPath + reportFile); // ExtentV3HtmlReporter
                 extent = new ExtentReports();
@@ -103,13 +106,13 @@ namespace WorkbenchApp.UITest.Core.BaseTestCase
             extent.Flush();
 
             // Get file (Result) path
-            string fileExportPath = Path.GetFullPath(@"../../../../TestResults/");
+            //string fileExportPath = Path.GetFullPath(@"../../../../../TestResults/");
 
             // Rename a file (default name of file result is 'index.html') --> This only applies to ExtentReport V4
             if (File.Exists(fileExportPath + "index.html"))
             {
-                string fileName = "Results";
-                string reportFile = DateTime.Now.ToString().Replace("/", "_").Replace(":", "_").Replace(" ", "_") + @"_" + fileName + ".html";
+                //string fileName = "Results";
+                //string reportFile = DateTime.Now.ToString().Replace("/", "_").Replace(":", "_").Replace(" ", "_") + @"_" + fileName + ".html";
                 File.Move(fileExportPath + "index.html", fileExportPath + reportFile);
             }
 

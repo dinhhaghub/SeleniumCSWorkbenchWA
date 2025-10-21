@@ -5,21 +5,31 @@
 	<browser>chrome</browser>
 	<!--projects: KS webapp-->
 	<project_name>webapp</project_name>
-	<site_name>qa</site_name>
+	<site_name>uat</site_name>
+
+	<!-- These are for prod only -->
+	<clientId></clientId>
+	<tenantId></tenantId>
+	<redirectUri>http://localhost</redirectUri>
 
 	<!--Collection of testing sites and credentials-->
 	<tokens bearerToken=""/>
 
 	<!--Webapp-->
 	<webapp>
+		<dev>
+			<url></url>
+			<instanceName></instanceName>
+			<webApis datalakeApi="" WorkbenchApi=""/>
+		</dev>
 		<qa>
 			<url></url>
-			<instanceName>qa</instanceName>
+			<instanceName></instanceName>
 			<webApis datalakeApi="" WorkbenchApi=""/>
 		</qa>
 		<uat>
 			<url></url>
-			<instanceName>uat</instanceName>
+			<instanceName></instanceName>
 			<webApis datalakeApi="" WorkbenchApi=""/>
 		</uat>
 	</webapp>
@@ -27,6 +37,8 @@
 	<account>
 		<valid email="" password="" username=""/>
 		<invalid email="abc@123.456" password="abc"/>
+		<!-- This account for prod only -->
+		<!--<valid email="" password="" username=""/>-->
 	</account>
 
 	<!--Firefox directory for 32 bit or 64 bit. (Currently, Using gecko 64 bit)-->
@@ -40,9 +52,16 @@
 	</database>-->
 
 	<!-- Screenshot directory and format setting -->
-	<!--<screenshot>
-		<screenshotPath>D://.../.../.../</screenshotPath>
+	<screenshot>
+		<!--<screenshotPath>D://.../.../.../</screenshotPath>-->
+		<screenshotPath>TestResults</screenshotPath>
 		<screenshotFormat>.jpeg</screenshotFormat>
-	</screenshot>-->
+	</screenshot>
+
+	<!-- Videorecord directory and format setting -->
+	<videorecord>
+		<videorecordPath>TestResults</videorecordPath>
+		<videorecordFormat>.mp4</videorecordFormat>
+	</videorecord>
 
 </config>

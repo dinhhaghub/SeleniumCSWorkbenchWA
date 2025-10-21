@@ -34,6 +34,7 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             string userProfileDownloadPath = Environment.GetEnvironmentVariable("USERPROFILE") + @"\" + "Downloads";
             string fileName = @"download.pdf";
             string? fileNameBaseline = null;
+            string videoFileName = "DxDReportTestTC001";
             #endregion
 
             #region Workflow scenario
@@ -41,6 +42,9 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
             test = rep.CreateTest("WorkbenchApp - DxD Report Test - TC001");
             try
             {
+                // Start recording video
+                Driver.StartVideoRecord(videoFileName);
+
                 // Log into the application
                 LoginAction.Instance.LoginSiteNoGodaddy(60, urlInstance);
 
@@ -110,50 +114,50 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
 
                 #region Verify headers in tables of Report
                     // Manager Info table
-                    verifyPoint = "Manager Name" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.managerInfoHeader, 1)
-                    && "VGO Capital Partners" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.managerInfoHeader, 2);
+                    verifyPoint = SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.managerInfoHeader, 1, "Manager Name")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.managerInfoHeader, 2, "VGO Capital Partners");
                 verifyPoints.Add(summaryTC = "Verify headers in the 1st table: '" + SearchFundPage.managerInfoHeader + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
                 // Custom Risk Benchmark table
-                verifyPoint = "Index Name" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.crbmHeader, 1)
-                    && "Beta" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.crbmHeader, 2)
-                    && "Exposure" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.crbmHeader, 3);
+                verifyPoint = SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.crbmHeader, 1, "Index Name")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.crbmHeader, 2, "Beta")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.crbmHeader, 3, "Exposure");
                 verifyPoints.Add(summaryTC = "Verify headers in the 2nd table: '" + SearchFundPage.crbmHeader + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
                 // Fund table
-                verifyPoint = "Fund Name" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.fundTableHeader, 1)
-                    && "Vintage Year" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.fundTableHeader, 2)
-                    && "Fund Size" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.fundTableHeader, 3)
-                    && "$ Invested" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.fundTableHeader, 4)
-                    && "EST GROSS IRR" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.fundTableHeader, 5)
-                    && "Gross TVPI" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.fundTableHeader, 6)
-                    && "Loss Ratio" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.fundTableHeader, 7);
+                verifyPoint = SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.fundTableHeader, 1, "Fund Name")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.fundTableHeader, 2, "Vintage Year")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.fundTableHeader, 3, "Fund Size")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.fundTableHeader, 4, "$ Invested")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.fundTableHeader, 5, "EST GROSS IRR")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.fundTableHeader, 6, "Gross TVPI")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.fundTableHeader, 7, "Loss Ratio");
                 verifyPoints.Add(summaryTC = "Verify headers in the 3rd table: '" + SearchFundPage.fundTableHeader + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
                 // Summary Results table --> No header column
 
                 // Results table
-                verifyPoint = "" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.resultTableHeader, 1)
-                    && "Filtered Deals" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.resultTableHeader, 2)
-                    && "All Deals" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.resultTableHeader, 3);
+                verifyPoint = SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.resultTableHeader, 1, "")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.resultTableHeader, 2, "Filtered Deals")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.resultTableHeader, 3, "All Deals");
                 verifyPoints.Add(summaryTC = "Verify headers in the 4th table: '" + SearchFundPage.resultTableHeader + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
                 // GTA table
-                verifyPoint = "Summary of deals by GTA" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, 1)
-                    && "As % of Deals" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, 2)
-                    && "As % of Capital" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, 3);
+                verifyPoint = SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, 1, "Summary of deals by GTA")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, 2, "As % of Deals")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, 3, "As % of Capital");
                 verifyPoints.Add(summaryTC = "Verify headers in the 5th table: '" + SearchFundPage.summaryOfGTATableHeader + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
                 // Attribution 1 Result table
-                verifyPoint = "" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.attributionTableHeader(1), 1)
-                    && "GTA (Actual Dates)" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.attributionTableHeader(1), 2)
-                    && "GTA (Time Zero)" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.attributionTableHeader(1), 3)
-                    && "% of Invest Capital" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.attributionTableHeader(1), 4);
+                verifyPoint = SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.attributionTableHeader(1), 1, "")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.attributionTableHeader(1), 2, "GTA (Actual Dates)")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.attributionTableHeader(1), 3, "GTA (Time Zero)")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.attributionTableHeader(1), 4, "% of Invest Capital");
                 verifyPoints.Add(summaryTC = "Verify headers in the 6th table: '" + SearchFundPage.attributionTableHeader(1) + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
@@ -163,46 +167,46 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 /// Check if the data of Sandbox or Staging (Conceptia) site then verify data (on that site)
                 if (urlInstance.Contains("lab"))
                 { 
-                    verifyPoint = "Company Name" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 1)
-                    && "Fund" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 2)
-                    && "Entry Date" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 3)
-                    && "Exit Date" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 4)
-                    && "Status" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 5)
-                    && "Gross IRR" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 6)
-                    && "Invested Capital" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 7)
-                    && "Realized Capital" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 8)
-                    && "Unrealized FMV" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 9)
-                    && "Attribution Category 1" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 10)
-                    && "Attribution Category 2" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 11)
-                    && "Attribution Category 3" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 12)
-                    && "Custom Weight" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 13)
-                    && "Actual Weight" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 14)
-                    && "Gross TVPI" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 15)
-                    && "Final Gross IRR" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 16)
-                    && "PME" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 17)
-                    && "GTA" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 18);
+                    verifyPoint = SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 1, "Company Name")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 2, "Fund")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 3, "Entry Date")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 4, "Exit Date")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 5, "Status")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 6, "Gross IRR")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 7, "Invested Capital")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 8, "Realized Capital")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 9, "Unrealized FMV")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 10, "Attribution Category 1")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 11, "Attribution Category 2")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 12, "Attribution Category 3")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 13, "Custom Weight")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 14, "Actual Weight")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 15, "Gross TVPI")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 16, "Final Gross IRR")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 17, "PME")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 18, "GTA");
                     verifyPoints.Add(summaryTC = "Verify headers in the 7th table: '" + SearchFundPage.baseTableHeader + "'", verifyPoint);
                     ExtReportResult(verifyPoint, summaryTC);
                 }
                 if (urlInstance.Contains("conceptia"))
                 {
-                    verifyPoint = "Company Name" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 1)
-                    && "Fund" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 2)
-                    && "Entry Date" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 3)
-                    && "Exit Date" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 4)
-                    && "Status" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 5)
-                    && "Gross IRR" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 6)
-                    && "Invested Capital" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 7)
-                    && "Realized Capital" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 8)
-                    && "Unrealized FMV" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 9)
-                    && "Attribution Category 1" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 10)
-                    && "Attribution Category 2" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 11)
-                    && "Custom Weight" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 12)
-                    && "Actual Weight" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 13)
-                    && "Gross TVPI" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 14)
-                    && "Final Gross IRR" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 15)
-                    && "PME" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 16)
-                    && "GTA" == SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 17);
+                    verifyPoint = SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 1, "Company Name")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 2, "Fund")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 3, "Entry Date")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 4, "Exit Date")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 5, "Status")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 6, "Gross IRR")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 7, "Invested Capital")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 8, "Realized Capital")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 9, "Unrealized FMV")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 10, "Attribution Category 1")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 11, "Attribution Category 2")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 12, "Custom Weight")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 13, "Actual Weight")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 14, "Gross TVPI")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 15, "Final Gross IRR")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 16, "PME")
+                    && SearchFundAction.Instance.HeadertableDxDGetText(10, SearchFundPage.baseTableHeader, 17, "GTA");
                     verifyPoints.Add(summaryTC = "Verify headers in the 7th table: '" + SearchFundPage.baseTableHeader + "'", verifyPoint);
                     ExtReportResult(verifyPoint, summaryTC);
                 }
@@ -211,38 +215,38 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 #region Verify data in tables of Report
                     string data;
                 // Manager Info table
-                verifyPoint = "Currency" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.managerInfoHeader, "1", "1")
-                    && "Effective Date" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.managerInfoHeader, "2", "1")
-                    && "Weight" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.managerInfoHeader, "3", "1");
+                verifyPoint = SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.managerInfoHeader, "1", "1", "Currency")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.managerInfoHeader, "2", "1", "Effective Date")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.managerInfoHeader, "3", "1", "Weight");
                 verifyPoints.Add(summaryTC = "Verify data in the 1st table: '" + SearchFundPage.managerInfoHeader + "' - Manager Name", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = "USD" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.managerInfoHeader, "1", "2")
-                    && "06/30/2021" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.managerInfoHeader, "2", "2")
-                    && "Percent Fund Final" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.managerInfoHeader, "3", "2");
+                verifyPoint = SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.managerInfoHeader, "1", "2", "USD")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.managerInfoHeader, "2", "2", "06/30/2021")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.managerInfoHeader, "3", "2", "Percent Fund Final");
                 verifyPoints.Add(summaryTC = "Verify data in the 1st table: '" + SearchFundPage.managerInfoHeader + "' - '" + cambridgeFund + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
                 // Custom Risk Benchmark table
-                verifyPoint = "S&P 500 Index" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.crbmHeader, "1", "1")
-                    && "MSCI Emerging Markets Latin America ex Brazil Net TR Index (USD)" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.crbmHeader, "2", "1");
+                verifyPoint = SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.crbmHeader, "1", "1", "S&P 500 Index")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.crbmHeader, "2", "1", "MSCI Emerging Markets Latin America ex Brazil Net TR Index (USD)");
                 verifyPoints.Add(summaryTC = "Verify data in the 2nd table: '" + SearchFundPage.crbmHeader + "' - Index Name", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = "-0.5" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.crbmHeader, "1", "2")
-                    && "1.5" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.crbmHeader, "2", "2");
+                verifyPoint = SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.crbmHeader, "1", "2", "-0.5")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.crbmHeader, "2", "2", "1.5");
                 verifyPoints.Add(summaryTC = "Verify data in the 2nd table: '" + SearchFundPage.crbmHeader + "' - Beta", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = "80.0%" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.crbmHeader, "1", "3")
-                    && "(4.5%)" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.crbmHeader, "2", "3");
+                verifyPoint = SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.crbmHeader, "1", "3", "80.0%")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.crbmHeader, "2", "3", "(4.5%)");
                 verifyPoints.Add(summaryTC = "Verify data in the 2nd table: '" + SearchFundPage.crbmHeader + "' - Exposure", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
                 // Fund table
-                verifyPoint = "Fund I" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.fundTableHeader, "1", "1")
-                    && "Fund II" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.fundTableHeader, "2", "1");
+                verifyPoint = SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.fundTableHeader, "1", "1", "Fund I")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.fundTableHeader, "2", "1", "Fund II");
                 verifyPoints.Add(summaryTC = "Verify data in the 3rd table: '" + SearchFundPage.fundTableHeader + "' - Fund Name", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = "2014" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.fundTableHeader, "1", "2")
-                    && "2016" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.fundTableHeader, "2", "2");
+                verifyPoint = SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.fundTableHeader, "1", "2", "2014")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.fundTableHeader, "2", "2", "2016");
                 verifyPoints.Add(summaryTC = "Verify data in the 3rd table: '" + SearchFundPage.fundTableHeader + "' - Vintage Year", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 verifyPoint = Convert.ToDouble(SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.fundTableHeader, "1", "3")) < 400
@@ -267,9 +271,9 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 ExtReportResult(verifyPoint, summaryTC);
 
                 // Summary Results table
-                verifyPoint = "Gross IRR" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryTableHeader, "1", "1")
-                    && "PME" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryTableHeader, "2", "1")
-                    && "Gross Total Alpha" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryTableHeader, "3", "1");
+                verifyPoint = SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryTableHeader, "1", "1", "Gross IRR")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryTableHeader, "2", "1", "PME")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryTableHeader, "3", "1", "Gross Total Alpha");
                 verifyPoints.Add(summaryTC = "Verify data in the 4th table: '" + SearchFundPage.summaryTableHeader + "' - 1st column", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
@@ -292,11 +296,11 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 }
 
                 // Results (Excl. Deals <3 yrs <50% Realized) table
-                verifyPoint = "Deals Positive GTA" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.resultTableHeader, "1", "1")
-                    && "Deals Negative GTA" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.resultTableHeader, "2", "1")
-                    && "Deals Lost Money" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.resultTableHeader, "3", "1")
-                    && "Capital Loss" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.resultTableHeader, "4", "1")
-                    && "Capital Written Down" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.resultTableHeader, "5", "1");
+                verifyPoint = SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.resultTableHeader, "1", "1", "Deals Positive GTA")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.resultTableHeader, "2", "1", "Deals Negative GTA")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.resultTableHeader, "3", "1", "Deals Lost Money")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.resultTableHeader, "4", "1", "Capital Loss")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.resultTableHeader, "5", "1", "Capital Written Down");
                 verifyPoints.Add(summaryTC = "Verify data in the 5th table: '" + SearchFundPage.resultTableHeader + "' - 1st column", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 verifyPoint = double.Parse(SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.resultTableHeader, "1", "2").Replace("%", "")) < 400;
@@ -307,15 +311,15 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 ExtReportResult(verifyPoint, summaryTC);
 
                 // GTA table
-                verifyPoint = "Less than -30%" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, "1", "1")
-                    && "-30% to -15%" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, "2", "1")
-                    && "-15% to -0%" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, "3", "1")
-                    && "-0% to 15%" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, "4", "1")
-                    && "15% to 30%" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, "5", "1")
-                    && "30% to 45%" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, "6", "1")
-                    && "45% to 60%" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, "7", "1")
-                    && "60% to above" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, "8", "1")
-                    && "Total" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, "9", "1");
+                verifyPoint = SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, "1", "1", "Less than -30%")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, "2", "1", "-30% to -15%")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, "3", "1", "-15% to -0%")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, "4", "1", "-0% to 15%")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, "5", "1", "15% to 30%")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, "6", "1", "30% to 45%")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, "7", "1", "45% to 60%")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, "8", "1", "60% to above")
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, "9", "1", "Total");
                 verifyPoints.Add(summaryTC = "Verify data in the 6th table: '" + SearchFundPage.summaryOfGTATableHeader + "' - Summary of deals by GTA", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 verifyPoint = double.Parse(SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.summaryOfGTATableHeader, "last()", "2").Replace("%", "")) < 400;
@@ -326,9 +330,9 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 ExtReportResult(verifyPoint, summaryTC);
 
                 // Attribution 1 Result table
-                verifyPoint = "Restructurings" == SearchFundAction.Instance.HeadertableDxDNameXGetText(10, SearchFundPage.attributionTableHeader(1), " Restructurings ")
-                    && "Special Situations" == SearchFundAction.Instance.HeadertableDxDNameXGetText(10, SearchFundPage.attributionTableHeader(1), " Special Situations ")
-                    && "Structured Finance" == SearchFundAction.Instance.HeadertableDxDNameXGetText(10, SearchFundPage.attributionTableHeader(1), " Structured Finance ");
+                verifyPoint = SearchFundAction.Instance.HeadertableDxDNameXGetText(10, SearchFundPage.attributionTableHeader(1), " Restructurings ", "Restructurings")
+                    && SearchFundAction.Instance.HeadertableDxDNameXGetText(10, SearchFundPage.attributionTableHeader(1), " Special Situations ", "Special Situations")
+                    && SearchFundAction.Instance.HeadertableDxDNameXGetText(10, SearchFundPage.attributionTableHeader(1), " Structured Finance ", "Structured Finance");
                 verifyPoints.Add(summaryTC = "Verify data in the 7th table: '" + SearchFundPage.attributionTableHeader(1) + "' - 1st column", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
@@ -379,20 +383,20 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
 
                 // Base table
                 string companyName = "Olive";
-                verifyPoint = companyName == SearchFundAction.Instance.HeadertableDxDNameXGetText(10, SearchFundPage.baseTableHeader, " Olive ")
-                    && "Total" == SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.baseTableHeader, "last()", "1"); // row 24
+                verifyPoint = SearchFundAction.Instance.HeadertableDxDNameXGetText(10, SearchFundPage.baseTableHeader, " Olive ", companyName)
+                    && SearchFundAction.Instance.DatatableDxDGetText(10, SearchFundPage.baseTableHeader, "last()", "1", "Total"); // row 24
                 verifyPoints.Add(summaryTC = "Verify data in the 9th table: '" + SearchFundPage.baseTableHeader + "' - Company Name", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data= "Fund I") == SearchFundAction.Instance.DatatableDxDNameXGetText(10, SearchFundPage.baseTableHeader, " " + companyName + " ", "1");
+                verifyPoint = SearchFundAction.Instance.DatatableDxDNameXGetText(10, SearchFundPage.baseTableHeader, " " + companyName + " ", "1", data = "Fund I");
                 verifyPoints.Add(summaryTC = "Verify data in the 9th table: '" + SearchFundPage.baseTableHeader + "' - Fund Name ("+ companyName + "): '"+ data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data= "12/31/2016") == SearchFundAction.Instance.DatatableDxDNameXGetText(10, SearchFundPage.baseTableHeader, " " + companyName + " ", "2");
+                verifyPoint = SearchFundAction.Instance.DatatableDxDNameXGetText(10, SearchFundPage.baseTableHeader, " " + companyName + " ", "2", data = "12/31/2016");
                 verifyPoints.Add(summaryTC = "Verify data in the 9th table: '" + SearchFundPage.baseTableHeader + "' - Start Date (Total): '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "") == SearchFundAction.Instance.DatatableDxDNameXGetText(10, SearchFundPage.baseTableHeader, " " + companyName + " ", "3");
+                verifyPoint = SearchFundAction.Instance.DatatableDxDNameXGetText(10, SearchFundPage.baseTableHeader, " " + companyName + " ", "3", data = "");
                 verifyPoints.Add(summaryTC = "Verify data in the 9th table: '" + SearchFundPage.baseTableHeader + "' - End Date ("+ companyName + "): '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Partial") == SearchFundAction.Instance.DatatableDxDNameXGetText(10, SearchFundPage.baseTableHeader, " " + companyName + " ", "4");
+                verifyPoint = SearchFundAction.Instance.DatatableDxDNameXGetText(10, SearchFundPage.baseTableHeader, " " + companyName + " ", "4", data = "Partial");
                 verifyPoints.Add(summaryTC = "Verify data in the 9th table: '" + SearchFundPage.baseTableHeader + "' - Status ("+ companyName + "): '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
                 verifyPoint = double.Parse(SearchFundAction.Instance.DatatableDxDNameXGetText(10, SearchFundPage.baseTableHeader, " " + companyName + " ", "5").Replace("%", "")) < 200;
@@ -407,10 +411,10 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 verifyPoint = Convert.ToInt32(SearchFundAction.Instance.DatatableDxDNameXGetText(10, SearchFundPage.baseTableHeader, " " + companyName + " ", "8")) < 100;
                 verifyPoints.Add(summaryTC = "Verify data in the 9th table: '" + SearchFundPage.baseTableHeader + "' - Unrealized Fmv ("+ companyName + "): '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Restructurings") == SearchFundAction.Instance.DatatableDxDNameXGetText(10, SearchFundPage.baseTableHeader, " " + companyName + " ", "9");
+                verifyPoint = SearchFundAction.Instance.DatatableDxDNameXGetText(10, SearchFundPage.baseTableHeader, " " + companyName + " ", "9", data = "Restructurings");
                 verifyPoints.Add(summaryTC = "Verify data in the 9th table: '" + SearchFundPage.baseTableHeader + "' - Attribution Category 1 ("+ companyName +"): '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
-                verifyPoint = (data = "Restructurings") == SearchFundAction.Instance.DatatableDxDNameXGetText(10, SearchFundPage.baseTableHeader, " " + companyName + " ", "10");
+                verifyPoint = SearchFundAction.Instance.DatatableDxDNameXGetText(10, SearchFundPage.baseTableHeader, " " + companyName + " ", "10", data = "Restructurings");
                 verifyPoints.Add(summaryTC = "Verify data in the 9th table: '" + SearchFundPage.baseTableHeader + "' - Attribution Category 2 ("+ companyName + "): '" + data + "'", verifyPoint);
                 ExtReportResult(verifyPoint, summaryTC);
 
@@ -418,7 +422,7 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 if (urlInstance.Contains("lab"))
                 {
 
-                    verifyPoint = (data = "") == SearchFundAction.Instance.DatatableDxDNameXGetText(10, SearchFundPage.baseTableHeader, " " + companyName + " ", "11");
+                    verifyPoint = SearchFundAction.Instance.DatatableDxDNameXGetText(10, SearchFundPage.baseTableHeader, " " + companyName + " ", "11", data = "");
                     verifyPoints.Add(summaryTC = "Verify data in the 9th table: '" + SearchFundPage.baseTableHeader + "' - Attribution Category 3 (" + companyName + "): '" + data + "'", verifyPoint);
                     ExtReportResult(verifyPoint, summaryTC);
                     verifyPoint = Convert.ToInt32(SearchFundAction.Instance.DatatableDxDNameXGetText(10, SearchFundPage.baseTableHeader, " " + companyName + " ", "12")) < 100;
@@ -512,9 +516,18 @@ namespace WorkbenchApp.UITest.Tests.Features_Testing.Regression_Testing
                 // Delete downloaded PDF file
                 GeneralAction.Instance.DeleteFilePath(userProfileDownloadPath, fileName);
                 #endregion
+
+                // Stop recording video
+                Driver.StopVideoRecord();
+
+                // Delete video file
+                Driver.DeleteFilesContainsName(Path.GetFullPath(@"../../../../../TestResults/"), videoFileName);
             }
             catch (Exception exception)
             {
+                // Stop recording video
+                Driver.StopVideoRecord();
+
                 // Print exception
                 System.Console.WriteLine(exception);
 

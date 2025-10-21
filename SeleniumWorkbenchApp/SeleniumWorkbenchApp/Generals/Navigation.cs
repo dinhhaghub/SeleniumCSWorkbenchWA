@@ -32,6 +32,26 @@ namespace WorkbenchApp.UITest.Generals
         internal static By pageNames(string name) => By.XPath(@"//span[.='" + name + "']");
 
         // Initiate the elements
+        public IWebElement HighlightElement(IWebElement element, string? color = null, string? setOrRemoveAttr = null)
+        {
+            color ??= "blue";
+            setOrRemoveAttr ??= "remove"; // chỉ định hành động "remove" hoặc "keep"
+
+            IJavaScriptExecutor js = (IJavaScriptExecutor)Driver.Browser;
+
+            // Highlight
+            js.ExecuteScript("arguments[0].setAttribute('style', arguments[1]);", element, "border: 3px solid " + color + ";");
+            Thread.Sleep(150);
+
+            // Unhighlight nếu setOrRemoveAttr = "remove"
+            if (setOrRemoveAttr.Equals("remove", StringComparison.OrdinalIgnoreCase))
+            {
+                js.ExecuteScript("arguments[0].removeAttribute('style');", element);
+            }
+
+            return element;
+        }
+
         public IWebElement menuNames(int timeoutInSeconds, string name)
         {
             wait = new WebDriverWait(Driver.Browser, TimeSpan.FromSeconds(timeoutInSeconds));
@@ -48,7 +68,7 @@ namespace WorkbenchApp.UITest.Generals
         #region Items Action
         public NavigationAction ClickPageNames(int timeoutInSeconds, string name)
         {
-            Map.menuNames(timeoutInSeconds, name).Click();
+            Map.HighlightElement(Map.menuNames(timeoutInSeconds, name)).Click();
             return this;
         }
         #endregion
